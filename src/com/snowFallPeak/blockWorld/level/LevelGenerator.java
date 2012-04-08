@@ -1,10 +1,14 @@
 package com.snowFallPeak.blockWorld.level;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.snowFallPeak.blockWorld.util.Noise2;
 
 public class LevelGenerator {
+	Logger log = Logger.getLogger(getClass().getName());
 	private final int seed;
 	private final Noise2 noiseMaker;
 	private final Vector3f chunkDimensions;
@@ -19,6 +23,9 @@ public class LevelGenerator {
 		final LevelChunk chunk = new LevelChunk(chunkDimensions);
 		final double xStart = chunkPosition.x * chunkDimensions.x;
 		final double yStart = chunkPosition.y * chunkDimensions.y;
+		
+		log.log(Level.INFO, "Creating Chunk xStart={0}, yStart={1}", new Object[] {xStart, yStart});
+		
 		int cx = 0;
 		for (double x = xStart; x < xStart + chunkDimensions.x; x++) {
 			int cy = 0;
