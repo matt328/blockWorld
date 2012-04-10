@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.snowFallPeak.blockWorld.main;
+package org.blockworld.main;
 
 import org.apache.log4j.Logger;
 

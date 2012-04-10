@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.snowFallPeak.blockWorld.level.neighbor;
+package org.blockworld.level.neighbor;
 
 import com.jme3.scene.Geometry;
 

@@ -1,4 +1,4 @@
-package com.snowFallPeak.blockWorld.level;
+package org.blockworld.level;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -6,18 +6,18 @@ import java.util.Collection;
 import jme3tools.optimize.GeometryBatchFactory;
 
 import org.apache.log4j.Logger;
+import org.blockworld.level.neighbor.BackNeighbor;
+import org.blockworld.level.neighbor.BottomNeighbor;
+import org.blockworld.level.neighbor.FrontNeighbor;
+import org.blockworld.level.neighbor.LeftNeighbor;
+import org.blockworld.level.neighbor.Neighbor;
+import org.blockworld.level.neighbor.RightNeighbor;
+import org.blockworld.level.neighbor.TopNeighbor;
 
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
-import com.snowFallPeak.blockWorld.level.neighbor.BackNeighbor;
-import com.snowFallPeak.blockWorld.level.neighbor.BottomNeighbor;
-import com.snowFallPeak.blockWorld.level.neighbor.FrontNeighbor;
-import com.snowFallPeak.blockWorld.level.neighbor.LeftNeighbor;
-import com.snowFallPeak.blockWorld.level.neighbor.Neighbor;
-import com.snowFallPeak.blockWorld.level.neighbor.RightNeighbor;
-import com.snowFallPeak.blockWorld.level.neighbor.TopNeighbor;
 
 public class LevelChunk {
 	private final short[] data;

@@ -16,7 +16,7 @@
 
 	<property name="assets.jar.name" value="assets.jar" />
 
-	<property name="main.class" value="com.snowFallPeak.blockWorld.main.MyGame" />
+	<property name="main.class" value="org.blockworld.main.MyGame" />
 
 	<property name="main.jar.name" value="${ant.project.name}.jar" />
 	<property name="dist.jar" value="${dist.dir}/${main.jar.name}" />

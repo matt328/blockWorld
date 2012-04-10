@@ -3,12 +3,12 @@ package com.jTest.main;
 import java.util.BitSet;
 import java.util.Random;
 
+import org.blockworld.level.Level;
+import org.blockworld.util.Noise2;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.snowFallPeak.blockWorld.level.Level;
-import com.snowFallPeak.blockWorld.util.Noise2;
 
 public class LevelChunkTest {
 	private Level level;

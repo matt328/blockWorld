@@ -2,12 +2,12 @@ package com.jTest.main.level;
 
 import junit.framework.Assert;
 
+import org.blockworld.level.LevelChunk;
+import org.blockworld.level.LevelGenerator;
 import org.junit.Test;
 
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
-import com.snowFallPeak.blockWorld.level.LevelChunk;
-import com.snowFallPeak.blockWorld.level.LevelGenerator;
 
 public class LevelGeneratorTest {
 

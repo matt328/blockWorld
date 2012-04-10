@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.snowFallPeak.blockWorld.level;
+package org.blockworld.level;
 
 import com.jme3.math.Vector3f;
 

@@ -1,4 +1,4 @@
-package com.snowFallPeak.blockWorld.util;
+package org.blockworld.util;
 
 public final class Noise {
 	static public double noise(double x, double y, double z) {

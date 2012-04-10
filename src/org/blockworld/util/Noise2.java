@@ -1,4 +1,4 @@
-package com.snowFallPeak.blockWorld.util;
+package org.blockworld.util;
 
 public final class Noise2 {
 

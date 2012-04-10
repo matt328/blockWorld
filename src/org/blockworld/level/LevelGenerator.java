@@ -1,11 +1,12 @@
-package com.snowFallPeak.blockWorld.level;
+package org.blockworld.level;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.blockworld.util.Noise2;
+
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
-import com.snowFallPeak.blockWorld.util.Noise2;
 
 public class LevelGenerator {
 	Logger log = Logger.getLogger(getClass().getName());

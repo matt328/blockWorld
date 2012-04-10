@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.snowFallPeak.blockWorld.level.neighbor;
+package org.blockworld.level.neighbor;
 
 import com.jme3.math.FastMath;
 import com.jme3.scene.Geometry;
@@ -14,7 +14,7 @@ import com.jme3.scene.shape.Quad;
 public class LeftNeighbor implements Neighbor {
 
 	/* (non-Javadoc)
-	 * @see com.snowFallPeak.blockWorld.level.neighbor.Neighbor#getGeometry(int, int, int, int)
+	 * @see org.blockworld.level.neighbor.Neighbor#getGeometry(int, int, int, int)
 	 */
 	@Override
 	public Geometry getGeometry(int x, int y, int z, int levelSize) {

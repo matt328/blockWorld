@@ -1,10 +1,13 @@
 /**
  * 
  */
-package com.snowFallPeak.blockWorld.main;
+package org.blockworld.main;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
+import org.blockworld.level.LevelChunk;
+import org.blockworld.level.LevelGenerator;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AppState;
@@ -12,8 +15,6 @@ import com.jme3.material.Material;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
-import com.snowFallPeak.blockWorld.level.LevelChunk;
-import com.snowFallPeak.blockWorld.level.LevelGenerator;
 
 /**
  * @author Matt

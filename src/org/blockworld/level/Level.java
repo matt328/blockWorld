@@ -1,4 +1,4 @@
-package com.snowFallPeak.blockWorld.level;
+package org.blockworld.level;
 
 public class Level {
 	private final LevelChunk[] chunks;
