@@ -21,7 +21,7 @@ public class LevelGenerator {
 	}
 
 	public LevelChunk generateChunk(final Vector2f chunkPosition) {
-		final LevelChunk chunk = new LevelChunk(chunkDimensions);
+		final LevelChunk chunk = new LevelChunk(chunkDimensions, chunkPosition);
 		final double xStart = chunkPosition.x * chunkDimensions.x;
 		final double yStart = chunkPosition.y * chunkDimensions.y;
 		
