@@ -18,6 +18,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
+import com.jme3.scene.shape.Box;
 
 public class LevelChunk {
 	private final short[] data;
@@ -30,7 +31,7 @@ public class LevelChunk {
 		sizeY = newSizeY;
 		sizeZ = newSizeZ;
 		chunkPosition = newChunkPosition;
-		
+
 		int dataSize = sizeX * sizeY * sizeZ;
 		log.debug("Chunk data size: " + dataSize);
 		data = new short[dataSize];
@@ -53,7 +54,7 @@ public class LevelChunk {
 	public int getSizeInBytes() {
 		return sizeX * sizeY * sizeZ * 2;
 	}
-	
+
 	public Geometry createGeometry() {
 		int levelSize = sizeX;
 		Collection<Geometry> geometries = new ArrayList<Geometry>();
@@ -63,8 +64,12 @@ public class LevelChunk {
 					if (get(x, y, z) == 0) {
 						Collection<Neighbor> neighbors = getNeighbors(x, y, z);
 						if (!neighbors.isEmpty()) {
-							for(Neighbor neighbor : neighbors) {
-								geometries.add(neighbor.getGeometry(x, y, z, levelSize));
+							for (Neighbor neighbor : neighbors) {
+								geometries.add(neighbor.getGeometry(x, y, z, chunkPosition, levelSize));
+								Box b = new Box(0.25f, 0.25f, 0.25f);
+								Geometry bg = new Geometry("b" + x + y + z, b);
+								bg.setLocalTranslation(x + chunkPosition.x, y - levelSize, z + chunkPosition.y);
+								geometries.add(bg);
 							}
 						}
 					}
@@ -80,37 +85,37 @@ public class LevelChunk {
 
 	public Collection<Neighbor> getNeighbors(final int x, final int y, final int z) {
 		Collection<Neighbor> neighbors = new ArrayList<Neighbor>();
-	
+
 		// TOP
 		if ((y < sizeY - 1 && get(x, y + 1, z) != 0)) {
 			neighbors.add(new TopNeighbor());
 		}
-	
+
 		// BOTTOM
 		if (y > 0 && get(x, y - 1, z) != 0) {
 			neighbors.add(new BottomNeighbor());
 		}
-		
+
 		// LEFT
 		if (x > 0 && get(x - 1, y, z) != 0) {
 			neighbors.add(new LeftNeighbor());
 		}
-	
+
 		// RIGHT
 		if (x < sizeX - 1 && get(x + 1, y, z) != 0) {
 			neighbors.add(new RightNeighbor());
 		}
-		
+
 		// FRONT
 		if (z < sizeZ - 1 && get(x, y, z + 1) != 0) {
 			neighbors.add(new FrontNeighbor());
 		}
-		
+
 		// BACK
 		if (z > 0 && get(x, y, z - 1) != 0) {
 			neighbors.add(new BackNeighbor());
 		}
-	
+
 		return neighbors;
 	}
 }

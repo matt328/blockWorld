@@ -3,6 +3,7 @@
  */
 package org.blockworld.level.neighbor;
 
+import com.jme3.math.Vector2f;
 import com.jme3.scene.Geometry;
 
 /**
@@ -10,5 +11,5 @@ import com.jme3.scene.Geometry;
  *
  */
 public interface Neighbor {
-	Geometry getGeometry(int x, int y, int z, int levelSize);
+	Geometry getGeometry(int x, int y, int z, Vector2f chunkPosition, int levelSize);
 }

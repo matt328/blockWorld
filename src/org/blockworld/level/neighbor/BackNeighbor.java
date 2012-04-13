@@ -3,6 +3,7 @@
  */
 package org.blockworld.level.neighbor;
 
+import com.jme3.math.Vector2f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Quad;
 
@@ -12,14 +13,12 @@ import com.jme3.scene.shape.Quad;
  */
 public class BackNeighbor implements Neighbor {
 
-	/* (non-Javadoc)
-	 * @see org.blockworld.level.neighbor.Neighbor#getGeometry(int, int, int, int)
-	 */
 	@Override
-	public Geometry getGeometry(int x, int y, int z, int levelSize) {
+	public Geometry getGeometry(int x, int y, int z, final Vector2f chunkPosition, int levelSize) {
 		final Quad q = new Quad(1.0f, 1.0f);
 		final Geometry g = new Geometry("Box" + x + y + z, q);
-		g.setLocalTranslation(x - 0.5f, (y - levelSize) - 0.5f, z - 0.5f);
+		Vector2f pos = chunkPosition.mult(levelSize);
+		g.setLocalTranslation(x - 0.5f + pos.x, (y - levelSize) - 0.5f, z - 0.5f + pos.y);
 		return g;
 	}
 

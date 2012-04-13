@@ -28,34 +28,27 @@ import com.jme3.system.AppSettings;
  */
 public class MyGame extends SimpleApplication implements AnalogListener {
 	private static Logger log = Logger.getLogger(MyGame.class.getName());
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.jme3.app.SimpleApplication#simpleInitApp()
-	 */
+
 	@Override
 	public void simpleInitApp() {
 		AppState startupAppState = new StartupAppState();
 		stateManager.attach(startupAppState);
-		
-		
-		
-		Joystick[] joysticks = inputManager.getJoysticks(); 
+
+		Joystick[] joysticks = inputManager.getJoysticks();
 		log.log(Level.INFO, "{0} joysticks found", joysticks.length);
-		
+
 		Joystick p1 = joysticks[0];
-        inputManager.addMapping("Joy Left", new JoyAxisTrigger(0, 2, true));
-        inputManager.addMapping("Joy Right", new JoyAxisTrigger(0, 2, false));
-        inputManager.addMapping("Joy Down", new JoyAxisTrigger(0, 3, true));
-        inputManager.addMapping("Joy Up", new JoyAxisTrigger(0, 3, false));
-        inputManager.addListener(this, "Joy Left", "Joy Right", "Joy Down", "Joy Up");
-        inputManager.setAxisDeadZone(0.2f);
-		
+		inputManager.addMapping("Joy Left", new JoyAxisTrigger(0, 2, true));
+		inputManager.addMapping("Joy Right", new JoyAxisTrigger(0, 2, false));
+		inputManager.addMapping("Joy Down", new JoyAxisTrigger(0, 3, true));
+		inputManager.addMapping("Joy Up", new JoyAxisTrigger(0, 3, false));
+		inputManager.addListener(this, "Joy Left", "Joy Right", "Joy Down", "Joy Up");
+		inputManager.setAxisDeadZone(0.2f);
+
 		final float levelSize = 4;
 		final LevelGenerator generator = new LevelGenerator(16, new Vector3f(levelSize, levelSize, levelSize));
 		Collection<LevelChunk> chunks = new ArrayList<LevelChunk>();
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 1; i++) {
 			LevelChunk c = generator.generateChunk(new Vector2f(i, 0));
 			chunks.add(c);
 		}
@@ -73,10 +66,10 @@ public class MyGame extends SimpleApplication implements AnalogListener {
 	 */
 	public static void main(final String[] args) {
 		final MyGame app = new MyGame();
-        AppSettings settings = new AppSettings(true);
-        settings.setUseJoysticks(true);
-        app.setShowSettings(false);
-        app.setSettings(settings);
+		AppSettings settings = new AppSettings(true);
+		settings.setUseJoysticks(true);
+		app.setShowSettings(false);
+		app.setSettings(settings);
 		app.start();
 	}
 
