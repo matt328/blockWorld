@@ -11,5 +11,5 @@ import com.jme3.scene.Geometry;
  *
  */
 public interface Neighbor {
-	Geometry getGeometry(int x, int y, int z, Vector2f chunkPosition, int levelSize);
+	Geometry getGeometry(int x, int y, int z, Vector2f chunkPosition, int levelSize, int bias);
 }

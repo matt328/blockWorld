@@ -28,9 +28,11 @@ import com.jme3.system.AppSettings;
  */
 public class MyGame extends SimpleApplication implements AnalogListener {
 	private static Logger log = Logger.getLogger(MyGame.class.getName());
-
+	private static final int CHUNK_SIZE = 28;
+	private static final int NUM_CHUNKS = 9;
 	@Override
 	public void simpleInitApp() {
+		log.setLevel(Level.SEVERE);
 		AppState startupAppState = new StartupAppState();
 		stateManager.attach(startupAppState);
 
@@ -45,19 +47,24 @@ public class MyGame extends SimpleApplication implements AnalogListener {
 		inputManager.addListener(this, "Joy Left", "Joy Right", "Joy Down", "Joy Up");
 		inputManager.setAxisDeadZone(0.2f);
 
-		final float levelSize = 4;
-		final LevelGenerator generator = new LevelGenerator(16, new Vector3f(levelSize, levelSize, levelSize));
+		final LevelGenerator generator = new LevelGenerator(16, new Vector3f(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE));
 		Collection<LevelChunk> chunks = new ArrayList<LevelChunk>();
-		for (int i = 0; i < 1; i++) {
-			LevelChunk c = generator.generateChunk(new Vector2f(i, 0));
-			chunks.add(c);
+
+		for (int x = 0; x < NUM_CHUNKS; x++) {
+			for(int z = 0; z < NUM_CHUNKS; z++) {
+				LevelChunk c = generator.generateChunk(new Vector2f(x, z));
+				chunks.add(c);
+			}
 		}
+		
 		for (LevelChunk chunk : chunks) {
 			Geometry g = chunk.createGeometry();
-			final Material mat2 = new Material(assetManager, "Common/MatDefs/Misc/SimpleTextured.j3md");
-			mat2.setTexture("m_ColorMap", assetManager.loadTexture("Textures/grass.png"));
-			g.setMaterial(mat2);
-			rootNode.attachChild(g);
+			if (g != null) {
+				final Material mat2 = new Material(assetManager, "Common/MatDefs/Misc/SimpleTextured.j3md");
+				mat2.setTexture("m_ColorMap", assetManager.loadTexture("Textures/grass.png"));
+				g.setMaterial(mat2);
+				rootNode.attachChild(g);
+			}
 		}
 	}
 
@@ -68,6 +75,10 @@ public class MyGame extends SimpleApplication implements AnalogListener {
 		final MyGame app = new MyGame();
 		AppSettings settings = new AppSettings(true);
 		settings.setUseJoysticks(true);
+		settings.setVSync(true);
+		settings.setWidth(800);
+		settings.setHeight(600);
+		settings.setBitsPerPixel(24);
 		app.setShowSettings(false);
 		app.setSettings(settings);
 		app.start();

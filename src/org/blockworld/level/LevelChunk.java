@@ -18,10 +18,9 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
-import com.jme3.scene.shape.Box;
 
 public class LevelChunk {
-	private final short[] data;
+	private final byte[] data;
 	private final int sizeX, sizeY, sizeZ;
 	private final Vector2f chunkPosition;
 	private static final Logger log = Logger.getLogger(LevelChunk.class.getName());
@@ -34,25 +33,25 @@ public class LevelChunk {
 
 		int dataSize = sizeX * sizeY * sizeZ;
 		log.debug("Chunk data size: " + dataSize);
-		data = new short[dataSize];
+		data = new byte[dataSize];
 	}
 
 	public LevelChunk(final Vector3f chunkDimensions, final Vector2f newChunkPosition) {
 		this((int) chunkDimensions.x, (int) chunkDimensions.y, (int) chunkDimensions.z, newChunkPosition);
 	}
 
-	public short get(final int x, final int y, final int z) {
+	public byte get(final int x, final int y, final int z) {
 		final int pos = x + y * sizeX + z * sizeX * sizeY;
 		return data[pos];
 	}
 
 	public void set(final short val, final int x, final int y, final int z) {
 		final int pos = x + y * sizeX + z * sizeX * sizeY;
-		data[pos] = val;
+		data[pos] = (byte) val;
 	}
 
 	public int getSizeInBytes() {
-		return sizeX * sizeY * sizeZ * 2;
+		return sizeX * sizeY * sizeZ;
 	}
 
 	public Geometry createGeometry() {
@@ -61,26 +60,46 @@ public class LevelChunk {
 		for (int x = 0; x < sizeX; x++) {
 			for (int y = 0; y < levelSize; y++) {
 				for (int z = 0; z < levelSize; z++) {
+					// If the cell is empty
 					if (get(x, y, z) == 0) {
 						Collection<Neighbor> neighbors = getNeighbors(x, y, z);
 						if (!neighbors.isEmpty()) {
 							for (Neighbor neighbor : neighbors) {
-								geometries.add(neighbor.getGeometry(x, y, z, chunkPosition, levelSize));
-								Box b = new Box(0.25f, 0.25f, 0.25f);
-								Geometry bg = new Geometry("b" + x + y + z, b);
-								bg.setLocalTranslation(x + chunkPosition.x, y - levelSize, z + chunkPosition.y);
-								geometries.add(bg);
+								geometries.add(neighbor.getGeometry(x, y, z, chunkPosition, levelSize, 1));
 							}
+						}
+					}
+					// If the cell is on the edge and is not empty, fill in
+					// whatever edge it is up against
+					if (get(x, y, z) != 0) {
+						// Left Neighbor
+						if(x == 0) {	
+							Neighbor leftNeighbor = new LeftNeighbor();
+							geometries.add(leftNeighbor.getGeometry(x, y, z, chunkPosition, levelSize, -1));
+						} else if (x == levelSize - 1) {
+							geometries.add(new RightNeighbor().getGeometry(x, y, z, chunkPosition, levelSize, -1));
+						}
+						if (y == levelSize - 1) {
+							geometries.add(new TopNeighbor().getGeometry(x, y, z, chunkPosition, levelSize, -1));
+						}
+						if(z == 0) {	
+							geometries.add(new FrontNeighbor().getGeometry(x, y, z, chunkPosition, levelSize, -1));
+						} else if (z == levelSize - 1) {
+							geometries.add(new BackNeighbor().getGeometry(x, y, z, chunkPosition, levelSize, -1));
 						}
 					}
 				}
 			}
 		}
-		Mesh mesh = new Mesh();
-		GeometryBatchFactory.mergeGeometries(geometries, mesh);
-		mesh.updateBound();
-		Geometry g = new Geometry("World", mesh);
-		return g;
+		if (!geometries.isEmpty()) {
+			Mesh mesh = new Mesh();
+			GeometryBatchFactory.mergeGeometries(geometries, mesh);
+			mesh.updateBound();
+			Geometry g = new Geometry("World", mesh);
+			return g;
+		} else {
+			return null;
+		}
 	}
 
 	public Collection<Neighbor> getNeighbors(final int x, final int y, final int z) {

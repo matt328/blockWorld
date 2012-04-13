@@ -1,8 +1,6 @@
 package org.blockworld.level;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import org.apache.log4j.Logger;
 import org.blockworld.util.Noise2;
 
 import com.jme3.math.Vector2f;
@@ -22,19 +20,18 @@ public class LevelGenerator {
 
 	public LevelChunk generateChunk(final Vector2f chunkPosition) {
 		final LevelChunk chunk = new LevelChunk(chunkDimensions, chunkPosition);
-		final double xStart = chunkDimensions.x;
-		final double yStart = chunkDimensions.y;
+		final double xStart = chunkPosition.x * chunkDimensions.x;
+		final double zStart = chunkPosition.y * chunkDimensions.z;
 		
-		log.log(Level.INFO, "Creating Chunk xStart={0}, yStart={1}", new Object[] {xStart, yStart});
+		//log.log(Level.FINEST, "Creating Chunk xStart={0}, yStart={1}", new Object[] {xStart, yStart});
 		
 		int cx = 0;
 		for (double x = xStart; x < xStart + chunkDimensions.x; x++) {
 			int cy = 0;
-			for (double y = yStart; y < yStart + chunkDimensions.y; y++) {
+			for (double y = 0; y < chunkDimensions.y; y++) {
 				int cz = 0;
-				for (double z = 0; z < chunkDimensions.z; z++) {
+				for (double z = zStart; z < zStart + chunkDimensions.z; z++) {
 					final double noise = noiseMaker.noise(x / 10, y / 10, z / 10);
-					//System.out.println("noise(" + x / 10 + ", " + y / 10 + ", " + z / 10 + "): " + noise);
 					final short val = (short) (noise > 0 ? 1 : 0);
 					chunk.set(val, cx, cy, cz);
 					cz++;
