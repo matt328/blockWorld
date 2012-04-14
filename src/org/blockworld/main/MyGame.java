@@ -28,11 +28,10 @@ import com.jme3.system.AppSettings;
  */
 public class MyGame extends SimpleApplication implements AnalogListener {
 	private static Logger log = Logger.getLogger(MyGame.class.getName());
-	private static final int CHUNK_SIZE = 28;
+	private static final int CHUNK_SIZE = 32;
 	private static final int NUM_CHUNKS = 9;
 	@Override
 	public void simpleInitApp() {
-		log.setLevel(Level.SEVERE);
 		AppState startupAppState = new StartupAppState();
 		stateManager.attach(startupAppState);
 
@@ -49,18 +48,21 @@ public class MyGame extends SimpleApplication implements AnalogListener {
 
 		final LevelGenerator generator = new LevelGenerator(16, new Vector3f(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE));
 		Collection<LevelChunk> chunks = new ArrayList<LevelChunk>();
-
+		
+		long start = System.currentTimeMillis();
 		for (int x = 0; x < NUM_CHUNKS; x++) {
 			for(int z = 0; z < NUM_CHUNKS; z++) {
 				LevelChunk c = generator.generateChunk(new Vector2f(x, z));
 				chunks.add(c);
 			}
 		}
+		long end = System.currentTimeMillis();
+		log.log(Level.INFO, "Generating Chunks took {0}ms", (end - start));
 		
 		for (LevelChunk chunk : chunks) {
 			Geometry g = chunk.createGeometry();
 			if (g != null) {
-				final Material mat2 = new Material(assetManager, "Common/MatDefs/Misc/SimpleTextured.j3md");
+				final Material mat2 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 				mat2.setTexture("m_ColorMap", assetManager.loadTexture("Textures/grass.png"));
 				g.setMaterial(mat2);
 				rootNode.attachChild(g);
@@ -68,6 +70,12 @@ public class MyGame extends SimpleApplication implements AnalogListener {
 		}
 	}
 
+	@Override
+	public void simpleUpdate(final float tpf) {
+		// geom.rotate(0.0f, 0.2f * tpf, 0.0f);
+		super.simpleUpdate(tpf);
+	}
+	
 	/**
 	 * @param args
 	 */
@@ -82,12 +90,6 @@ public class MyGame extends SimpleApplication implements AnalogListener {
 		app.setShowSettings(false);
 		app.setSettings(settings);
 		app.start();
-	}
-
-	@Override
-	public void simpleUpdate(final float tpf) {
-		// geom.rotate(0.0f, 0.2f * tpf, 0.0f);
-		super.simpleUpdate(tpf);
 	}
 
 	@Override
