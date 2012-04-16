@@ -1,27 +1,28 @@
 package org.blockworld.level;
 
-import org.apache.log4j.Logger;
+import java.util.logging.Logger;
+
 import org.blockworld.util.Noise2;
 
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 
-public class LevelGenerator {
+public class ChunkGenerator {
 	Logger log = Logger.getLogger(getClass().getName());
 	private final int seed;
 	private final Noise2 noiseMaker;
 	private final Vector3f chunkDimensions;
 
-	public LevelGenerator(final int newSeed, final Vector3f newChunkDimensions) {
+	public ChunkGenerator(final int newSeed, final Vector3f newChunkDimensions) {
 		seed = newSeed;
 		noiseMaker = new Noise2(seed);
 		chunkDimensions = newChunkDimensions;
 	}
 
-	public LevelChunk generateChunk(final Vector2f chunkPosition) {
-		final LevelChunk chunk = new LevelChunk(chunkDimensions, chunkPosition);
-		final double xStart = chunkPosition.x * chunkDimensions.x;
-		final double zStart = chunkPosition.y * chunkDimensions.z;
+	public Chunk generateChunk(final Vector2f worldCoordinates) {
+		final Chunk chunk = new Chunk(chunkDimensions, worldCoordinates);
+		final double xStart = worldCoordinates.x * chunkDimensions.x;
+		final double zStart = worldCoordinates.y * chunkDimensions.z;
 		
 		//log.log(Level.FINEST, "Creating Chunk xStart={0}, yStart={1}", new Object[] {xStart, yStart});
 		

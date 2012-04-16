@@ -2,10 +2,11 @@ package org.blockworld.level;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import jme3tools.optimize.GeometryBatchFactory;
 
-import org.apache.log4j.Logger;
 import org.blockworld.level.neighbor.BackNeighbor;
 import org.blockworld.level.neighbor.BottomNeighbor;
 import org.blockworld.level.neighbor.FrontNeighbor;
@@ -19,24 +20,24 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 
-public class LevelChunk {
+public class Chunk {
 	private final byte[] data;
 	private final int sizeX, sizeY, sizeZ;
 	private final Vector2f chunkPosition;
-	private static final Logger log = Logger.getLogger(LevelChunk.class.getName());
+	private static final Logger log = Logger.getLogger(Chunk.class.getName());
 
-	public LevelChunk(final int newSizeX, final int newSizeY, final int newSizeZ, final Vector2f newChunkPosition) {
+	public Chunk(final int newSizeX, final int newSizeY, final int newSizeZ, final Vector2f newChunkPosition) {
 		sizeX = newSizeX;
 		sizeY = newSizeY;
 		sizeZ = newSizeZ;
 		chunkPosition = newChunkPosition;
 
 		int dataSize = sizeX * sizeY * sizeZ;
-		log.debug("Chunk data size: " + dataSize);
+		log.log(Level.INFO, "Chunk data size: " + dataSize);
 		data = new byte[dataSize];
 	}
 
-	public LevelChunk(final Vector3f chunkDimensions, final Vector2f newChunkPosition) {
+	public Chunk(final Vector3f chunkDimensions, final Vector2f newChunkPosition) {
 		this((int) chunkDimensions.x, (int) chunkDimensions.y, (int) chunkDimensions.z, newChunkPosition);
 	}
 
