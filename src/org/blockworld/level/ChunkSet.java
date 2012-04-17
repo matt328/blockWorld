@@ -2,6 +2,7 @@ package org.blockworld.level;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -47,7 +48,7 @@ public class ChunkSet extends Node {
 	 *            <code>Chunk</code>s, in Cells that will make up this chunkset.
 	 */
 	public ChunkSet(final int newCellsPerChunk, final Material material) {
-		executor = Executors.newFixedThreadPool(2, new ThreadFactory() {
+		executor = Executors.newFixedThreadPool(4, new ThreadFactory() {
 			public Thread newThread(Runnable r) {
 				Thread th = new Thread(r);
 				th.setDaemon(true);
@@ -76,14 +77,20 @@ public class ChunkSet extends Node {
 				} else {
 					// Filter needed chunks
 					CollectionUtils.removeAll(neededChunks, loadedChunks);
-					Collection<Vector2f> toUnload = new ArrayList<Vector2f>(loadedChunks);
+					final Collection<Vector2f> toUnload = new ArrayList<Vector2f>(loadedChunks);
 					CollectionUtils.removeAll(toUnload, neededChunks);
 					if (!toUnload.isEmpty()) {
-						// Submit tasks to unload toUnload chunks
-
+						getControl(ChunkSetControl.class).enqueue(new Callable<Void>() {
+							@Override
+							public Void call() throws Exception {
+								for (Vector2f v : toUnload) {
+									detachChildNamed("Chunk-" + v.toString());
+								}
+								return null;
+							}
+						});
 					}
 					if (!neededChunks.isEmpty()) {
-
 						for (Vector2f gridCoordinates : neededChunks) {
 							ChunkLoaderTask clt = new ChunkLoaderTask(this, gridCoordinates, noiseGenerator, cellsPerChunk);
 							executor.submit(clt);

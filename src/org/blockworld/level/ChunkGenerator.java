@@ -20,7 +20,7 @@ public class ChunkGenerator {
 	}
 
 	public Chunk generateChunk(final Vector2f worldCoordinates) {
-		final Chunk chunk = new Chunk(chunkDimensions, worldCoordinates);
+		final Chunk chunk = new Chunk((int) chunkDimensions.x, worldCoordinates);
 		final double xStart = worldCoordinates.x * chunkDimensions.x;
 		final double zStart = worldCoordinates.y * chunkDimensions.z;
 		
@@ -34,7 +34,7 @@ public class ChunkGenerator {
 				for (double z = zStart; z < zStart + chunkDimensions.z; z++) {
 					final double noise = noiseMaker.noise(x / 10, y / 10, z / 10);
 					final short val = (short) (noise > 0 ? 1 : 0);
-					chunk.set(val, cx, cy, cz);
+					chunk.set((byte)val, cx, cy, cz);
 					cz++;
 				}
 				cy++;
