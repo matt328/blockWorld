@@ -2,6 +2,7 @@ package org.blockworld.level;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -10,9 +11,12 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.blockworld.util.Noise2;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableMultiset;
+import com.google.common.collect.Iterables;
 import com.jme3.material.Material;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -72,26 +76,27 @@ public class ChunkSet extends Node {
 			Lock lock = loadedChunksLock.writeLock();
 			lock.lock();
 			try {
-				if (CollectionUtils.isEqualCollection(neededChunks, loadedChunks)) {
+				if (ImmutableMultiset.copyOf(neededChunks).equals(ImmutableMultiset.copyOf(loadedChunks))) {
 					return;
 				} else {
 					// Filter needed chunks
-					CollectionUtils.removeAll(neededChunks, loadedChunks);
-					final Collection<Vector2f> toUnload = new ArrayList<Vector2f>(loadedChunks);
-					CollectionUtils.removeAll(toUnload, neededChunks);
-					if (!toUnload.isEmpty()) {
+					List<Vector2f> neededToLoad = new ArrayList<Vector2f>(Collections2.filter(neededChunks, Predicates.not(Predicates.in(loadedChunks))));
+					final Collection<Vector2f> copyOfLoaded = new ArrayList<Vector2f>(loadedChunks);
+					
+					final List<Vector2f> neededToUnload = new ArrayList<Vector2f>(Collections2.filter(copyOfLoaded, Predicates.not(Predicates.in(neededChunks))));
+					if (!neededToUnload.isEmpty()) {
 						getControl(ChunkSetControl.class).enqueue(new Callable<Void>() {
 							@Override
 							public Void call() throws Exception {
-								for (Vector2f v : toUnload) {
+								for (Vector2f v : neededToUnload) {
 									detachChildNamed("Chunk-" + v.toString());
 								}
 								return null;
 							}
 						});
 					}
-					if (!neededChunks.isEmpty()) {
-						for (Vector2f gridCoordinates : neededChunks) {
+					if (!neededToLoad.isEmpty()) {
+						for (Vector2f gridCoordinates : neededToLoad) {
 							ChunkLoaderTask clt = new ChunkLoaderTask(this, gridCoordinates, noiseGenerator, cellsPerChunk);
 							executor.submit(clt);
 							loadedChunks.add(gridCoordinates);

@@ -24,9 +24,10 @@ import com.jme3.system.AppSettings;
  * 
  */
 public class MyGame extends SimpleApplication implements AnalogListener {
-	
-	private static final int CHUNK_SIZE = 32;
+
+	private static final int CHUNK_SIZE = 9;
 	private static final Logger LOG = LoggerFactory.getLogger(MyGame.class);
+
 	@Override
 	public void simpleInitApp() {
 		AppState startupAppState = new StartupAppState();
@@ -51,15 +52,13 @@ public class MyGame extends SimpleApplication implements AnalogListener {
 	 * @param args
 	 */
 	public static void main(final String[] args) {
-	    final java.util.logging.Logger rootLogger = LogManager.getLogManager().getLogger("");
-	    final Handler[] handlers = rootLogger.getHandlers();
-	    for (int i = 0; i < handlers.length; i++) {
-	      rootLogger.removeHandler(handlers[i]);
-	    }
-	    SLF4JBridgeHandler.install();
-	    
-	    LOG.info("SLF4J Call from MyGame.main()");
-	    
+		final java.util.logging.Logger rootLogger = LogManager.getLogManager().getLogger("");
+		final Handler[] handlers = rootLogger.getHandlers();
+		for (int i = 0; i < handlers.length; i++) {
+			rootLogger.removeHandler(handlers[i]);
+		}
+		SLF4JBridgeHandler.install();
+
 		final MyGame app = new MyGame();
 		AppSettings settings = new AppSettings(true);
 		settings.setUseJoysticks(true);
@@ -74,7 +73,7 @@ public class MyGame extends SimpleApplication implements AnalogListener {
 
 	@Override
 	public void onAnalog(String name, float value, float tpf) {
-		
+
 	}
 
 }

@@ -10,10 +10,10 @@ import java.util.Collection;
 
 import junit.framework.Assert;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.collect.ImmutableMultiset;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 
@@ -78,7 +78,7 @@ public class ChunkSetTest {
 
 		Collection<Vector2f> actual = chunkSet.calculateNeededChunks(cgl);
 
-		Assert.assertTrue(CollectionUtils.isEqualCollection(actual, expected));
+		Assert.assertTrue(ImmutableMultiset.copyOf(actual).equals(ImmutableMultiset.copyOf(expected)));
 
 		Vector2f cgl2 = new Vector2f(0.0f, 2.0f);
 		Collection<Vector2f> expected2 = new ArrayList<Vector2f>(6);
@@ -94,7 +94,7 @@ public class ChunkSetTest {
 
 		Collection<Vector2f> actual2 = chunkSet.calculateNeededChunks(cgl2);
 
-		Assert.assertTrue(CollectionUtils.isEqualCollection(actual2, expected2));
+		Assert.assertTrue(ImmutableMultiset.copyOf(actual2).equals(ImmutableMultiset.copyOf(expected2)));
 
 		Vector2f cgl3 = new Vector2f(0.0f, 0.0f);
 		Collection<Vector2f> expected3 = new ArrayList<Vector2f>(6);
@@ -110,7 +110,7 @@ public class ChunkSetTest {
 
 		Collection<Vector2f> actual3 = chunkSet.calculateNeededChunks(cgl3);
 
-		Assert.assertTrue("Vector(0, 0) failed.", CollectionUtils.isEqualCollection(actual3, expected3));
+		Assert.assertTrue("Vector(0, 0) failed.", ImmutableMultiset.copyOf(actual3).equals(ImmutableMultiset.copyOf(expected3)));
 	}
 
 }

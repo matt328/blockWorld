@@ -14,6 +14,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.util.BufferUtils;
+import com.google.common.base.Objects;
 
 public class Chunk extends Geometry {
 	private byte[][][] byteList;
@@ -171,6 +172,31 @@ public class Chunk extends Geometry {
 
 	public int getSizeInBytes() {
 		return byteList.length;
+	}
+
+	@Override
+	public String toString() {
+		return Objects.toStringHelper(this)
+			.add("super", super.toString())
+			.add("numCells", numCells)
+			.add("globalGridPosition", globalGridPosition)
+			.toString();
+	}
+
+	@Override
+	public int hashCode(){
+		return Objects.hashCode(super.hashCode(), globalGridPosition);
+	}
+	
+	@Override
+	public boolean equals(Object object){
+		if (object instanceof Chunk) {
+			if (!super.equals(object)) 
+				return false;
+			Chunk that = (Chunk) object;
+			return Objects.equal(this.globalGridPosition, that.globalGridPosition);
+		}
+		return false;
 	}
 
 }
