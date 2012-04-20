@@ -15,7 +15,9 @@
 	<category name="com.jme3.terrain.heightmap.ImageBasedHeightMapGrid">
 		<priority value="warn" />
 	</category>
-
+	<category name="org.springframework">
+		<priority value="info" />
+	</category>
 	<root>
 		<priority value="debug" />
 		<appender-ref ref="console" />
