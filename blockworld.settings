@@ -1,0 +1,18 @@
+#jME3 AppSettings
+#Thu Apr 19 22:14:13 EDT 2012
+Width(int)=1024
+BitsPerPixel(int)=24
+StencilBits(int)=0
+DepthBits(int)=24
+Renderer(string)=LWJGL-OpenGL2
+VSync(bool)=true
+DisableJoysticks(bool)=false
+Frequency(int)=-1
+AudioRenderer(string)=LWJGL
+Height(int)=768
+Fullscreen(bool)=false
+UseInput(bool)=true
+Title(string)=Blockworld
+FrameRate(int)=-1
+Samples(int)=0
+SettingsDialogImage(string)=/com/jme3/app/Monkey.png

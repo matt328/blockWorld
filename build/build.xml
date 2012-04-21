@@ -25,7 +25,7 @@
 	<property name="launch4j.lib.dir" value="${launch4j.home.dir}/lib" />
 
 	<property name="lib.dir" value="${basedir}/lib" />
-	
+
 	<property name="src.infoplist" value="${basedir}/etc/macosx/Info.plist" />
 	<property name="src.osx-stub" value="${basedir}/etc/macosx/osx-stub" />
 	<property name="src.osx-icns" value="${basedir}/etc/macosx/osx-icon.icns" />
@@ -43,9 +43,6 @@
 	</path>
 
 	<path id="class.path">
-		<fileset dir="${jMonkey.dir}">
-			<include name="**/*.jar" />
-		</fileset>
 		<fileset dir="${lib.dir}">
 			<include name="**/*.jar" />
 		</fileset>

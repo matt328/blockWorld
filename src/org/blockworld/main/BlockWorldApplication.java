@@ -3,46 +3,65 @@
  */
 package org.blockworld.main;
 
-import org.blockworld.level.ChunkLoader;
-import org.blockworld.level.ChunkSet;
-import org.blockworld.level.ChunkSetControl;
+import org.blockworld.core.asset.ImageAtlasBlockWorldAssetManager;
+import org.blockworld.world.Block;
+import org.blockworld.world.control.WorldNodeUpdateControl;
+import org.blockworld.world.loader.BlockLoader;
+import org.blockworld.world.loader.TerasologyTerrainLoader;
+import org.blockworld.world.node.WorldNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AppState;
 import com.jme3.input.controls.AnalogListener;
-import com.jme3.material.Material;
+import com.jme3.light.AmbientLight;
+import com.jme3.light.DirectionalLight;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 
 /**
  * @author Matt
  * 
  */
-public class BlockWorldApplication extends SimpleApplication implements AnalogListener, BlockWorldApplicationInterface {
+public class BlockWorldApplication extends SimpleApplication implements AnalogListener {
 
-	private static final int CHUNK_SIZE = 9;
+	private final static float HORIZONT = 256;
 	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(BlockWorldApplication.class);
-	private final ChunkLoader chunkLoader;
 
-	public BlockWorldApplication(BlockWorldApplicationSettingsProvider provider, ChunkLoader chunkLoader) {
+	private WorldNode worldNode;
+	private ImageAtlasBlockWorldAssetManager blockFactory;
+	private DirectionalLight sunDirectionalLight;
+	
+	public BlockWorldApplication(BlockWorldApplicationSettingsProvider provider) {
 		setSettings(provider.getAppSettings());
-		this.chunkLoader = chunkLoader;
 	}
 
 	@Override
 	public void simpleInitApp() {
 		AppState startupAppState = new StartupAppState();
 		stateManager.attach(startupAppState);
-		Material mat2 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-		mat2.setTexture("m_ColorMap", assetManager.loadTexture("Textures/grass.png"));
-		ChunkSet set = new ChunkSet(CHUNK_SIZE, mat2);
 		flyCam.setMoveSpeed(3.0f);
 		getCamera().setLocation(new Vector3f(10.0f, 50.0f, 10.0f));
-		ChunkSetControl ccs = new ChunkSetControl(getCamera());
-		set.addControl(ccs);
-		rootNode.attachChild(set);
+
+		blockFactory = new ImageAtlasBlockWorldAssetManager(assetManager, renderManager);
+		BlockLoader<Block> loader = new TerasologyTerrainLoader("mathilda-marie");
+		worldNode = new WorldNode(blockFactory, loader);
+		// worldNode = new WorldNode(blockFactory, new TerasologyTerrainLoader("mathilda-marie"), null, flyCam, 8.0f, HORIZONT);
+		rootNode.attachChild(worldNode);
+		worldNode.addControl(new WorldNodeUpdateControl(worldNode, this.getCamera()));
+		initLight();
+	}
+
+	private void initLight() {
+		sunDirectionalLight = new DirectionalLight();
+		sunDirectionalLight.setDirection(new Vector3f(-1, -1, -1).normalizeLocal());
+		sunDirectionalLight.setColor(ColorRGBA.White);
+		rootNode.addLight(sunDirectionalLight);
+		final AmbientLight ambientLight = new AmbientLight();
+		ambientLight.setColor(ColorRGBA.Yellow.mult(2));
+		rootNode.addLight(ambientLight);
 	}
 
 	@Override

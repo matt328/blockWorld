@@ -4,44 +4,19 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="var" path="JME_HOME/jMonkeyEngine3.jar"/>
 	<classpathentry kind="lib" path="lib/trove-3.0.2.jar" sourcepath="lib/trove-3.0.2-src.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.6.4.jar" sourcepath="lib/slf4j-api-1.6.4-sources.jar"/>
 	<classpathentry kind="lib" path="lib/jul-to-slf4j-1.6.4.jar" sourcepath="lib/jul-to-slf4j-1.6.4-sources.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.6.4.jar" sourcepath="lib/slf4j-log4j12-1.6.4-sources.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar" sourcepath="E:/dev/java/libraries/apache-log4j-1.2.16/src/main/java"/>
 	<classpathentry kind="lib" path="lib/guava-11.0.2.jar" sourcepath="lib/guava-11.0.2-sources.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.context-3.1.1.RELEASE.jar" sourcepath="lib/org.springframework.context-sources-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.beans-3.1.1.RELEASE.jar" sourcepath="lib/org.springframework.beans-sources-3.1.1.RELEASE.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io-2.3.jar" sourcepath="lib/commons-io-2.3-sources.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.core-3.1.1.RELEASE.jar" sourcepath="lib/org.springframework.core-sources-3.1.1.RELEASE.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar" sourcepath="lib/commons-logging-1.1.1-sources.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.asm-3.1.1.RELEASE.jar" sourcepath="lib/org.springframework.asm-sources-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.expression-3.1.1.RELEASE.jar" sourcepath="lib/org.springframework.expression-sources-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.aop-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.asm-sources-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.aspects-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.beans-sources-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.context-sources-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.context.support-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.core-sources-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.expression-sources-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.instrument-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.instrument.tomcat-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.jdbc-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.jms-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.orm-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.oxm-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.test-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.transaction-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.web-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.web.portlet-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.web.servlet-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.web.struts-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/cglib-2.2.2.jar" sourcepath="lib/cglib-src-2.2.2.jar"/>
-	<classpathentry kind="lib" path="lib/asm-3.3.1.jar"/>
-	<classpathentry kind="lib" path="lib/aopalliance.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine3.jar" sourcepath="lib/jMonkeyEngine3-source.zip"/>
+	<classpathentry kind="lib" path="lib/colt.jar" sourcepath="lib/colt-sources.zip"/>
+	<classpathentry kind="lib" path="lib/commons-lang3-3.1.jar" sourcepath="lib/commons-lang3-3.1-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 	<referencedentry kind="lib" path="E:/dev/java/jME3_2012-04-14/lib/jME3-core.jar" sourcepath="E:/dev/java/jME3_2012-04-14/source"/>
 	<referencedentry kind="lib" path="E:/dev/java/jME3_2012-04-14/lib/jME3-terrain.jar" sourcepath="E:/dev/java/jME3_2012-04-14/source"/>
+	<referencedentry kind="lib" path="lib/lib/jME3-core.jar" sourcepath="lib/jMonkeyEngine3-source.zip"/>
 </classpath>

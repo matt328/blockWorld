@@ -11,8 +11,8 @@ import java.util.logging.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import com.jme3.system.AppSettings;
 
 /**
  * @author Matt Teeter
@@ -22,7 +22,6 @@ public class Main {
 	private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 	static {
 		// JME uses java.util.logging - bridge to slf4 - see
-		// http://www.slf4j.org/legacy.html#jul-to-slf4j
 		final java.util.logging.Logger rootLogger = LogManager.getLogManager().getLogger("");
 		final Handler[] handlers = rootLogger.getHandlers();
 		for (int i = 0; i < handlers.length; i++) {
@@ -33,8 +32,18 @@ public class Main {
 
 	public static void main(String[] args) {
 		LOG.info("Blockworld Starts");
-		final ApplicationContext applicationContext = new AnnotationConfigApplicationContext(BlockWorldConfiguration.class);
-		final BlockWorldApplicationInterface bloxelApplication = applicationContext.getBean(BlockWorldApplicationInterface.class);
-		bloxelApplication.start();
+		final BlockWorldApplicationSettingsProvider settingsProvider = new BlockWorldApplicationSettingsProvider(new AppSettings(true));
+
+		final BlockWorldApplication app = new BlockWorldApplication(settingsProvider);
+
+		AppSettings settings = new AppSettings(true);
+		settings.setUseJoysticks(true);
+		settings.setVSync(true);
+		settings.setWidth(800);
+		settings.setHeight(600);
+		settings.setBitsPerPixel(24);
+		app.setShowSettings(false);
+		app.setSettings(settings);
+		app.start();
 	}
 }

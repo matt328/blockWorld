@@ -23,7 +23,7 @@ import com.jme3.system.JmeSystem;
  */
 public class BlockWorldApplicationSettingsProvider {
 	private static final Logger LOG = LoggerFactory.getLogger(BlockWorldApplicationSettingsProvider.class);
-	private static final File settingsFile = new File("bloxel.settings");
+	private static final File settingsFile = new File("blockworld.settings");
 	private final AppSettings defaultSettings;
 
 	public BlockWorldApplicationSettingsProvider(final AppSettings theDefaultSettings) {
