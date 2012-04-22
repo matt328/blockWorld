@@ -14,9 +14,13 @@ import java.util.List;
 
 import jme3tools.optimize.GeometryBatchFactory;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.blockworld.asset.TextureAtlas;
+import org.blockworld.util.GeometryBuilder;
 import org.blockworld.world.Block;
 import org.blockworld.world.BlockChunk;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
@@ -28,8 +32,8 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
-import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer.Type;
+import com.jme3.scene.shape.Box;
 import com.jme3.util.BufferUtils;
 
 /**
@@ -37,6 +41,7 @@ import com.jme3.util.BufferUtils;
  * 
  */
 public class FacesMeshChunkNode extends AbstractChunkNode {
+	private static final Logger LOG = LoggerFactory.getLogger(FacesMeshChunkNode.class);
 	private static final Vector3f NORMAL_UP = new Vector3f(0, 1, 0);
 	private static final Vector3f NORMAL_DOWN = new Vector3f(0, -1, 0);
 	private static final Vector3f NORMAL_RIGHT = new Vector3f(1, 0, 0);
@@ -89,7 +94,7 @@ public class FacesMeshChunkNode extends AbstractChunkNode {
 	}
 
 	@Override
-	protected List<Spatial> createGeometries() {
+	protected List<Geometry> createGeometries() {
 		final long start = System.currentTimeMillis();
 		vertices = ArrayListMultimap.create();
 		normals = ArrayListMultimap.create();
@@ -105,20 +110,35 @@ public class FacesMeshChunkNode extends AbstractChunkNode {
 		final List<Block> leaves = terrainChunk.getLeaves();
 		LOG.debug("Check " + leaves.size() + " elements / volume can max contains " + terrainChunk.getBoundingBox().getVolume() / terrainChunk.getElementSize() + " elements");
 
+		final List<Geometry> result = Lists.newArrayList();
+
 		for (Block data : leaves) {
 			final int blockType = data.getType();
 			final Vector3f blockPosition = data.getCenter();
+
 			final EnumSet<Face> faces = checkFaces(blockPosition, data.getDimension() * 2);
+
+//			if (!faces.isEmpty()) {
+//				Box box = new Box(blockPosition, data.getDimension() / 2, data.getDimension() / 2, data.getDimension() / 2);
+//				Geometry debugBox = new Geometry("Box" + blockPosition, box);
+//				result.add(debugBox);
+//
+//				if (faces.contains(Face.FACE_UP)) {
+//					debugBox.setMaterial(atlas.getBlueMaterial());
+//				} else {
+//					debugBox.setMaterial(atlas.getRedMaterial());
+//				}
+//			}
 			createFaces(blockPosition, data.getDimension(), faces, blockType);
+			//LOG.debug(String.format("Block at : %s, faces: %s", data.getCenter(), faces.toString()));
 			c++;
 			usedBlockTypes.add(blockType);
 		}
 
 		LOG.debug("Found " + c + " boxes with " + usedBlockTypes.size() + " different types");
 
-		final List<Geometry> result = Lists.newArrayList();
 		TIntIterator it = usedBlockTypes.iterator();
-		while(it.hasNext()) {
+		while (it.hasNext()) {
 			int blockType = it.next();
 			LOG.debug("Build mesh for material " + blockType + " ...");
 			final Mesh chunkMesh = new Mesh();
@@ -144,9 +164,12 @@ public class FacesMeshChunkNode extends AbstractChunkNode {
 		texCoord = null;
 		indexes = null;
 		lightCoord = null;
-		// merge geometries to reduce number of objects
-		return GeometryBatchFactory.makeBatches(result);
+		long duration = (System.currentTimeMillis() - start);
 
+		LOG.debug(String.format("Tesselating %d blocks took %dms", leaves.size(), duration));
+
+		List<Geometry> toReturn = GeometryBatchFactory.makeBatches(result);
+		return toReturn;
 	}
 
 	private EnumSet<Face> checkFaces(final Vector3f blockPosition, final float dimension) {
@@ -160,7 +183,7 @@ public class FacesMeshChunkNode extends AbstractChunkNode {
 			faces.add(Face.FACE_RIGHT);
 		}
 		if (needFace(currentBlock, x - dimension, y, z)) {
-			faces.add(Face.FACE_RIGHT);
+			faces.add(Face.FACE_LEFT);
 		}
 		if (needFace(currentBlock, x, y + dimension, z)) {
 			faces.add(Face.FACE_UP);
@@ -260,7 +283,7 @@ public class FacesMeshChunkNode extends AbstractChunkNode {
 			final int verticesSize = vertices.get(bloxelType).size();
 			vertices.get(bloxelType).addAll(Lists.newArrayList(pa, pb, pc, pd));
 			normals.get(bloxelType).addAll(NORMALS_BACKFACE);
-			texCoord.get(bloxelType).addAll(atlas.getTextureCoordinates(bloxelType, Face.FACE_BACK));
+			texCoord.get(bloxelType).addAll(atlas.getTextureCoordinates(bloxelType, Face.FACE_BACK.getValue()));
 			indexes.get(bloxelType).addAll(verticesIndex(verticesSize, TRIANGLE_INDIZES));
 			lightCoord.get(bloxelType).addAll(lightMapCoord);
 		}
@@ -268,7 +291,7 @@ public class FacesMeshChunkNode extends AbstractChunkNode {
 			final int verticesSize = vertices.get(bloxelType).size();
 			vertices.get(bloxelType).addAll(Lists.newArrayList(pf, pe, ph, pg));
 			normals.get(bloxelType).addAll(NORMALS_FRONTFACE);
-			texCoord.get(bloxelType).addAll(atlas.getTextureCoordinates(bloxelType, Face.FACE_FRONT));
+			texCoord.get(bloxelType).addAll(atlas.getTextureCoordinates(bloxelType, Face.FACE_FRONT.getValue()));
 			indexes.get(bloxelType).addAll(verticesIndex(verticesSize, TRIANGLE_INDIZES));
 			lightCoord.get(bloxelType).addAll(lightMapCoord);
 		}
@@ -276,7 +299,7 @@ public class FacesMeshChunkNode extends AbstractChunkNode {
 			final int verticesSize = vertices.get(bloxelType).size();
 			vertices.get(bloxelType).addAll(Lists.newArrayList(pb, pf, pd, ph));
 			normals.get(bloxelType).addAll(NORMALS_RIGHTFACE);
-			texCoord.get(bloxelType).addAll(atlas.getTextureCoordinates(bloxelType, Face.FACE_RIGHT));
+			texCoord.get(bloxelType).addAll(atlas.getTextureCoordinates(bloxelType, Face.FACE_RIGHT.getValue()));
 			indexes.get(bloxelType).addAll(verticesIndex(verticesSize, TRIANGLE_INDIZES));
 			lightCoord.get(bloxelType).addAll(lightMapCoord);
 		}
@@ -284,7 +307,7 @@ public class FacesMeshChunkNode extends AbstractChunkNode {
 			final int verticesSize = vertices.get(bloxelType).size();
 			vertices.get(bloxelType).addAll(Lists.newArrayList(pe, pa, pg, pc));
 			normals.get(bloxelType).addAll(NORMALS_LEFTFACE);
-			texCoord.get(bloxelType).addAll(atlas.getTextureCoordinates(bloxelType, Face.FACE_LEFT));
+			texCoord.get(bloxelType).addAll(atlas.getTextureCoordinates(bloxelType, Face.FACE_LEFT.getValue()));
 			indexes.get(bloxelType).addAll(verticesIndex(verticesSize, TRIANGLE_INDIZES));
 			lightCoord.get(bloxelType).addAll(lightMapCoord);
 		}
@@ -292,7 +315,7 @@ public class FacesMeshChunkNode extends AbstractChunkNode {
 			final int verticesSize = vertices.get(bloxelType).size();
 			vertices.get(bloxelType).addAll(Lists.newArrayList(pc, pd, pg, ph));
 			normals.get(bloxelType).addAll(NORMALS_UPFACE);
-			texCoord.get(bloxelType).addAll(atlas.getTextureCoordinates(bloxelType, Face.FACE_UP));
+			texCoord.get(bloxelType).addAll(atlas.getTextureCoordinates(bloxelType, Face.FACE_UP.getValue()));
 			indexes.get(bloxelType).addAll(verticesIndex(verticesSize, TRIANGLE_INDIZES));
 			lightCoord.get(bloxelType).addAll(lightMapCoord);
 		}
@@ -300,7 +323,7 @@ public class FacesMeshChunkNode extends AbstractChunkNode {
 			final int verticesSize = vertices.get(bloxelType).size();
 			vertices.get(bloxelType).addAll(Lists.newArrayList(pe, pf, pa, pb));
 			normals.get(bloxelType).addAll(NORMALS_DOWNFACE);
-			texCoord.get(bloxelType).addAll(atlas.getTextureCoordinates(bloxelType, Face.FACE_DOWN));
+			texCoord.get(bloxelType).addAll(atlas.getTextureCoordinates(bloxelType, Face.FACE_DOWN.getValue()));
 			indexes.get(bloxelType).addAll(verticesIndex(verticesSize, TRIANGLE_INDIZES));
 			lightCoord.get(bloxelType).addAll(lightMapCoord);
 		}

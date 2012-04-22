@@ -13,8 +13,15 @@ import java.util.Map;
  * 
  */
 public enum Face {
-	FACE_NO("none"), FACE_RIGHT("right"), FACE_LEFT("left"), FACE_UP("up"), FACE_DOWN("down"), FACE_FRONT("front"), FACE_BACK("back");
+	FACE_NO("none", 0),
+	FACE_RIGHT("right", 1),
+	FACE_LEFT("left", 2),
+	FACE_UP("up", 4),
+	FACE_DOWN("down", 8),
+	FACE_FRONT("front", 16),
+	FACE_BACK("back", 32);
 	private String str;
+	private int value;
 	private static Map<String, Face> faceMap = new HashMap<String, Face>(Face.values().length);
 
 	static {
@@ -23,12 +30,17 @@ public enum Face {
 		}
 	}
 	
-	private Face(String str) {
+	private Face(String str, int value) {
 		this.str = str;
+		this.value = value;
 	}
 
 	public String getStr() {
 		return str;
+	}
+	
+	public int getValue() {
+		return value;
 	}
 	
 	public static Face lookup(String str) {

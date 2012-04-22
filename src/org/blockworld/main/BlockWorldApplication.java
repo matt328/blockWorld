@@ -10,6 +10,10 @@ import org.slf4j.LoggerFactory;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AppState;
 import com.jme3.input.controls.AnalogListener;
+import com.jme3.light.AmbientLight;
+import com.jme3.light.DirectionalLight;
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 
 /**
@@ -30,11 +34,23 @@ public class BlockWorldApplication extends SimpleApplication implements AnalogLi
 		AppState startupAppState = new StartupAppState();
 		stateManager.attach(startupAppState);
 		flyCam.setMoveSpeed(3.0f);
-		getCamera().setLocation(new Vector3f(10.0f, 50.0f, 10.0f));
-
-		ChunkSetNode chunkSet = new ChunkSetNode(assetManager);
+		getCamera().setLocation(new Vector3f(-31.046837f, 78.36219f, 54.47701f));
+		getCamera().setRotation(new Quaternion(0.07764202f, 0.91964334f, -0.3065641f, 0.23290835f));
 		
-		rootNode.attachChild(chunkSet);
+	    DirectionalLight sunDirectionalLight = new DirectionalLight();
+	    sunDirectionalLight.setDirection(new Vector3f(-1, -1, -1).normalizeLocal());
+	    sunDirectionalLight.setColor(ColorRGBA.White);
+	    rootNode.addLight(sunDirectionalLight);
+	    final AmbientLight ambientLight = new AmbientLight();
+	    ambientLight.setColor(ColorRGBA.Yellow.mult(2));
+	    rootNode.addLight(ambientLight);
+		
+		try {
+			ChunkSetNode chunkSet = new ChunkSetNode(assetManager);
+			rootNode.attachChild(chunkSet);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override

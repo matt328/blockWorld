@@ -22,22 +22,36 @@ import com.jme3.scene.Node;
  */
 public class ChunkSetNode extends Node {
 	private final TextureAtlas atlas;
-	
-	/**
-	 * @param singleNode
-	 */
-	public ChunkSetNode(AssetManager theAssetManager) {
-		atlas = new BlockTextureAtlas(theAssetManager);
-		for (int i = 0; i < 9; i++) {
-			BlockChunk<Block> chunk = new BlockChunk<Block>(32, 1.0f, Vector3f.ZERO);
-			BlockLoader<BlockChunk<Block>> loader = new TerasologyBlockLoader<BlockChunk<Block>>("Matt Teeter");
-			loader.fill(chunk);
 
-			FacesMeshChunkNode terrainNode = new FacesMeshChunkNode(chunk, this, atlas);
-			attachChild(terrainNode);
-		}
+	public ChunkSetNode(AssetManager theAssetManager) throws Exception {
+		atlas = new BlockTextureAtlas(theAssetManager);
+		createChunk(new Vector3f(00.0f, 64.0f, 00.0f));
+		createChunk(new Vector3f(16.0f, 64.0f, 00.0f));
+		createChunk(new Vector3f(32.0f, 64.0f, 00.0f));
+		createChunk(new Vector3f(48.0f, 64.0f, 00.0f));
+		
+		createChunk(new Vector3f(00.0f, 64.0f, 16.0f));
+		createChunk(new Vector3f(16.0f, 64.0f, 16.0f));
+		createChunk(new Vector3f(32.0f, 64.0f, 16.0f));
+		createChunk(new Vector3f(48.0f, 64.0f, 16.0f));
+		
+		createChunk(new Vector3f(00.0f, 64.0f, 32.0f));
+		createChunk(new Vector3f(16.0f, 64.0f, 32.0f));
+		createChunk(new Vector3f(32.0f, 64.0f, 32.0f));
+		createChunk(new Vector3f(48.0f, 64.0f, 16.0f));
 	}
-	
+
+	private void createChunk(Vector3f position) {
+		BlockChunk<Block> chunk = new BlockChunk<Block>(16, 0.5f, position);
+		BlockLoader<BlockChunk<Block>> loader = new TerasologyBlockLoader<BlockChunk<Block>>("M");
+		loader.fill(chunk);
+
+		FacesMeshChunkNode terrainNode = new FacesMeshChunkNode(chunk, this, atlas);
+		terrainNode.calculate();
+		terrainNode.update(Vector3f.ZERO, Vector3f.ZERO);
+		attachChild(terrainNode);
+	}
+
 	public ChunkNode getChunkNode(Vector3f position) {
 		return null;
 	}

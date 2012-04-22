@@ -28,7 +28,7 @@ import com.jme3.scene.Spatial;
  * 
  */
 public abstract class AbstractChunkNode extends Node implements ChunkNode {
-	protected final Logger LOG = LoggerFactory.getLogger(getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractChunkNode.class);
 
 	enum ChunkState {
 		NEW, CALCULATED, UP2DATE, DIRTY
@@ -39,7 +39,7 @@ public abstract class AbstractChunkNode extends Node implements ChunkNode {
 	protected ChunkState state = ChunkState.NEW;
 	protected final Lock updateLock;
 
-	protected abstract List<Spatial> createGeometries();
+	protected abstract List<Geometry> createGeometries();
 
 	/**
 	 * Create a {@link ChunkNode}, supplying the {@link BlockChunk} that will serve as its geometry source.
@@ -89,7 +89,7 @@ public abstract class AbstractChunkNode extends Node implements ChunkNode {
 			updateLock.unlock();
 		}
 		final float duration = (System.currentTimeMillis() - startTime);
-		LOG.debug("Calculated Chunk in {}ms" + duration);
+		LOG.debug("Calculated Chunk in {}ms", duration);
 		return true;
 	}
 

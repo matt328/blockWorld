@@ -14,7 +14,7 @@ import com.jme3.math.Vector3f;
 public class BasicBlock implements Block {
 	private final int type;
 	private final Vector3f center;
-	private final float blockSize;
+	private final float dimension;
 
 	/**
 	 * @param type
@@ -23,7 +23,7 @@ public class BasicBlock implements Block {
 	public BasicBlock(final int type, final float blockSize, final Vector3f center) {
 		this.type = type;
 		this.center = center;
-		this.blockSize = blockSize;
+		this.dimension = blockSize;
 	}
 
 	@Override
@@ -37,12 +37,7 @@ public class BasicBlock implements Block {
 
 	@Override
 	public float getDimension() {
-		return 1.0f;
-	}
-
-	@Override
-	public float getBlockSize() {
-		return blockSize;
+		return dimension;
 	}
 
 }

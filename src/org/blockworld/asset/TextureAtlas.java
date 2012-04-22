@@ -5,11 +5,8 @@
  */
 package org.blockworld.asset;
 
-import gnu.trove.set.hash.TIntHashSet;
-
 import java.util.List;
-
-import org.blockworld.world.node.Face;
+import java.util.Set;
 
 import com.jme3.material.Material;
 import com.jme3.math.Vector2f;
@@ -19,11 +16,38 @@ import com.jme3.math.Vector2f;
  * 
  */
 public interface TextureAtlas {
-	TIntHashSet getTypes();
+	/**
+	 * @return a collection of available block types, not case sensitive
+	 */
+	Set<Integer> getBlockTypes();
 
-	Material getMaterial(final int type);
+	/**
+	 * @param blockType
+	 *            must not be <code>null</code>
+	 * @return the material for the given type
+	 */
+	Material getMaterial(final Integer blockType);
 
-	List<Vector2f> getTextureCoordinates(final int type, Face face);
+	/**
+	 * Return the texture coordinates for a block type and a face (left, right, up, down, front and back).
+	 * 
+	 * @param blockType
+	 *            must not be <code>null</code>
+	 * @param face
+	 *            (left, right, up, down, front and back)
+	 * @return a list with four {@link Vector2f elements}
+	 */
+	List<Vector2f> getTextureCoordinates(final Integer blockType, final int face);
 
-	boolean isTransparent(int type);
+	/**
+	 * @param blockType
+	 *            must not be <code>null</code>
+	 * @return <code>true</code> if the block type represents a transparent material else <code>false</code>
+	 */
+	boolean isTransparent(Integer blockType);
+
+	public Material getRedMaterial();
+
+	public Material getBlueMaterial();
+
 }
