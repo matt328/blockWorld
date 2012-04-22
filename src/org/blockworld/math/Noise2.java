@@ -1,4 +1,4 @@
-package org.blockworld.util;
+package org.blockworld.math;
 
 public final class Noise2 {
 

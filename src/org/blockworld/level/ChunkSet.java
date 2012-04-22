@@ -11,7 +11,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.blockworld.util.Noise2;
+import org.blockworld.math.Noise2;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;

@@ -21,12 +21,12 @@ import com.jme3.system.JmeSystem;
  * @author Matt Teeter
  * 
  */
-public class BlockWorldApplicationSettingsProvider {
-	private static final Logger LOG = LoggerFactory.getLogger(BlockWorldApplicationSettingsProvider.class);
-	private static final File settingsFile = new File("bloxel.settings");
+public class SettingsProvider {
+	private static final Logger LOG = LoggerFactory.getLogger(SettingsProvider.class);
+	private static final File settingsFile = new File("blockworld.settings");
 	private final AppSettings defaultSettings;
 
-	public BlockWorldApplicationSettingsProvider(final AppSettings theDefaultSettings) {
+	public SettingsProvider(final AppSettings theDefaultSettings) {
 		defaultSettings = theDefaultSettings;
 	}
 

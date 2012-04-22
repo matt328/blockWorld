@@ -2,7 +2,7 @@ package org.blockworld.level;
 
 import java.util.logging.Logger;
 
-import org.blockworld.util.Noise2;
+import org.blockworld.math.Noise2;
 
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;

@@ -5,7 +5,7 @@ package org.blockworld.level;
 
 import java.util.concurrent.Callable;
 
-import org.blockworld.util.Noise2;
+import org.blockworld.math.Noise2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
