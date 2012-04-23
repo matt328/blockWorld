@@ -33,7 +33,6 @@ import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
-import com.jme3.scene.shape.Box;
 import com.jme3.util.BufferUtils;
 
 /**
@@ -118,19 +117,19 @@ public class FacesMeshChunkNode extends AbstractChunkNode {
 
 			final EnumSet<Face> faces = checkFaces(blockPosition, data.getDimension() * 2);
 
-//			if (!faces.isEmpty()) {
-//				Box box = new Box(blockPosition, data.getDimension() / 2, data.getDimension() / 2, data.getDimension() / 2);
-//				Geometry debugBox = new Geometry("Box" + blockPosition, box);
-//				result.add(debugBox);
-//
-//				if (faces.contains(Face.FACE_UP)) {
-//					debugBox.setMaterial(atlas.getBlueMaterial());
-//				} else {
-//					debugBox.setMaterial(atlas.getRedMaterial());
-//				}
-//			}
+			// if (!faces.isEmpty()) {
+			// Box box = new Box(blockPosition, data.getDimension() / 2, data.getDimension() / 2, data.getDimension() / 2);
+			// Geometry debugBox = new Geometry("Box" + blockPosition, box);
+			// result.add(debugBox);
+			//
+			// if (faces.contains(Face.FACE_UP)) {
+			// debugBox.setMaterial(atlas.getBlueMaterial());
+			// } else {
+			// debugBox.setMaterial(atlas.getRedMaterial());
+			// }
+			// }
 			createFaces(blockPosition, data.getDimension(), faces, blockType);
-			//LOG.debug(String.format("Block at : %s, faces: %s", data.getCenter(), faces.toString()));
+			// LOG.debug(String.format("Block at : %s, faces: %s", data.getCenter(), faces.toString()));
 			c++;
 			usedBlockTypes.add(blockType);
 		}
@@ -212,6 +211,7 @@ public class FacesMeshChunkNode extends AbstractChunkNode {
 			final ChunkNode neighborChunk = world.getChunkNode(new Vector3f(x, y, z));
 			if (neighborChunk == null) {
 				// TODO: Need to fix this once neighbors become available
+				// TODO: Something fishy still going on here
 				return false;
 			}
 			return needFace(currentBlock, neighborChunk.getBlock(new Vector3f(x, y, z)));

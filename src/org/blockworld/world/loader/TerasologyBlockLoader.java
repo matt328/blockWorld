@@ -45,7 +45,7 @@ public class TerasologyBlockLoader<T extends Chunk<Block>> implements BlockLoade
 		float density = calcMountainDensity(x, y, z);
 		// System.out.println(String.format("%.2f,%.2f,%.2f:%f,%f", x, y, z, height, density));
 		density = height - density;
-		if (y < 120) {
+		if (y < 119) {
 			density /= (y + 1) * 1.7f;
 		} else {
 			density /= (y + 1) * 2.0f;
@@ -255,7 +255,15 @@ public class TerasologyBlockLoader<T extends Chunk<Block>> implements BlockLoade
 						final int offsetX = (x / rateX) * rateX;
 						final int offsetY = (y / rateY) * rateY;
 						final int offsetZ = (z / rateZ) * rateZ;
-						densityMap[x][y][z] = MathHelper.triLerp(x, y, z, densityMap[offsetX][offsetY][offsetZ], densityMap[offsetX][rateY + offsetY][offsetZ], densityMap[offsetX][offsetY][offsetZ + rateZ], densityMap[offsetX][offsetY + rateY][offsetZ + rateZ], densityMap[rateX + offsetX][offsetY][offsetZ], densityMap[rateX + offsetX][offsetY + rateY][offsetZ], densityMap[rateX + offsetX][offsetY][offsetZ + rateZ], densityMap[rateX + offsetX][offsetY + rateY][offsetZ + rateZ], offsetX, rateX + offsetX, offsetY, rateY + offsetY, offsetZ, offsetZ + rateZ);
+						densityMap[x][y][z] = MathHelper.triLerp(x, y, z, densityMap[offsetX][offsetY][offsetZ],
+								densityMap[offsetX][rateY + offsetY][offsetZ],
+								densityMap[offsetX][offsetY][offsetZ + rateZ],
+								densityMap[offsetX][offsetY + rateY][offsetZ + rateZ],
+								densityMap[rateX + offsetX][offsetY][offsetZ],
+								densityMap[rateX + offsetX][offsetY + rateY][offsetZ],
+								densityMap[rateX + offsetX][offsetY][offsetZ + rateZ],
+								densityMap[rateX + offsetX][offsetY + rateY][offsetZ + rateZ],
+								offsetX, rateX + offsetX, offsetY, rateY + offsetY, offsetZ, offsetZ + rateZ);
 					}
 				}
 			}

@@ -118,7 +118,7 @@ public class BlockTextureAtlas implements TextureAtlas {
 		}
 
 		final Texture texture = theAssetManager.loadTexture("Textures/Bloxels/minecraft.png");
-		final Texture normalMap = theAssetManager.loadTexture("Textures/Bloxels/minecraft_normal.png");
+		//final Texture normalMap = theAssetManager.loadTexture("Textures/Bloxels/minecraft_normal.png");
 		final Texture lightMap = theAssetManager.loadTexture("Textures/Bloxels/lightmap.png");
 
 		bloxelMaterial = new Material(theAssetManager, "Common/MatDefs/Light/Lighting.j3md");

@@ -33,7 +33,7 @@ public class BlockWorldApplication extends SimpleApplication implements AnalogLi
 	public void simpleInitApp() {
 		AppState startupAppState = new StartupAppState();
 		stateManager.attach(startupAppState);
-		flyCam.setMoveSpeed(3.0f);
+		flyCam.setMoveSpeed(6.0f);
 		getCamera().setLocation(new Vector3f(-31.046837f, 78.36219f, 54.47701f));
 		getCamera().setRotation(new Quaternion(0.07764202f, 0.91964334f, -0.3065641f, 0.23290835f));
 		
