@@ -56,7 +56,7 @@ public class BlockChunk<T extends Block> implements Chunk<T> {
 		final int mx = (int) (position.x + offsetX);
 		final int my = (int) (position.y + offsetY);
 		final int mz = (int) (position.z + offsetZ);
-		return (T) matrix.get(mx, my, mz);
+		return (T) matrix.getQuick(mx, my, mz);
 	}
 
 	@Override

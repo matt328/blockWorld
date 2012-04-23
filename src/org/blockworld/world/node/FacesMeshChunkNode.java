@@ -214,12 +214,13 @@ public class FacesMeshChunkNode extends AbstractChunkNode {
 				// TODO: Something fishy still going on here
 				return false;
 			}
-			return needFace(currentBlock, neighborChunk.getBlock(new Vector3f(x, y, z)));
+			Block neighborBlock = neighborChunk.getBlock(new Vector3f(x, y, z));
+			return needFace(currentBlock, neighborBlock);
 		}
 	}
 
 	private boolean needFace(final Block current, final Block neighborToCheck) {
-		Preconditions.checkNotNull(current, "current  must never be null");
+		Preconditions.checkNotNull(current, "current must never be null");
 		if (neighborToCheck == null) {
 			return true;
 		}
