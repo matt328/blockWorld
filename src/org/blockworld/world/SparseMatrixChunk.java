@@ -5,7 +5,7 @@
  */
 package org.blockworld.world;
 
-import java.util.List;
+import java.util.Collection;
 
 import cern.colt.matrix.ObjectFactory3D;
 import cern.colt.matrix.ObjectMatrix3D;
@@ -18,7 +18,7 @@ import com.jme3.math.Vector3f;
  * @author Matt Teeter
  * 
  */
-public class BlockChunk<T extends Block> implements Chunk<T> {
+public class SparseMatrixChunk<T extends Block> implements Chunk<T> {
 	private ObjectMatrix3D matrix;
 	private final BoundingBox boundingBox;
 	private final float elementSize;
@@ -28,7 +28,7 @@ public class BlockChunk<T extends Block> implements Chunk<T> {
 	private final float offsetZ;
 	private boolean dirty;
 
-	public BlockChunk(final int dimension, final float elementSize, final Vector3f center) {
+	public SparseMatrixChunk(final int dimension, final float elementSize, final Vector3f center) {
 		this.elementSize = elementSize;
 		boundingBox = new BoundingBox(center, dimension, dimension, dimension);
 		d = dimension * 2 + 1;
@@ -40,7 +40,10 @@ public class BlockChunk<T extends Block> implements Chunk<T> {
 
 	@Override
 	public boolean isEmpty(Vector3f position) {
-		return matrix.get((int) position.x, (int) position.y, (int) position.z) == null;
+		final int mx = (int) (position.x + offsetX);
+		final int my = (int) (position.y + offsetY);
+		final int mz = (int) (position.z + offsetZ);
+		return matrix.get(mx, my, mz) == null;
 	}
 
 	public void setBlock(T data, Vector3f position) {
@@ -95,12 +98,13 @@ public class BlockChunk<T extends Block> implements Chunk<T> {
 		this.dirty = dirty;
 	}
 
-	public List<Block> getLeaves() {
-		final List<Block> result = Lists.newArrayList();
+	@SuppressWarnings("unchecked")
+	public Collection<T> getLeaves() {
+		final Collection<T> result = Lists.newArrayList();
 		for (int slices = 0; slices < matrix.slices(); slices++) {
 			for (int rows = 0; rows < matrix.rows(); rows++) {
 				for (int columns = 0; columns < matrix.columns(); columns++) {
-					final Block element = (Block) matrix.get(slices, rows, columns);
+					final T element = (T) matrix.get(slices, rows, columns);
 					if (element != null) {
 						result.add(element);
 					}
@@ -114,7 +118,7 @@ public class BlockChunk<T extends Block> implements Chunk<T> {
 	 * @param terrainChunk
 	 * @return
 	 */
-	public static String createName(BlockChunk<Block> terrainChunk) {
+	public static String createName(Chunk<Block> terrainChunk) {
 		final Vector3f center = terrainChunk.getBoundingBox().getCenter();
 		return String.format("%.2f:%.2f:%.2f", center.x, center.y, center.z);
 	}

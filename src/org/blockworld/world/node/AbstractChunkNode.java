@@ -11,7 +11,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.blockworld.world.BasicBlock;
 import org.blockworld.world.Block;
-import org.blockworld.world.BlockChunk;
+import org.blockworld.world.SparseMatrixChunk;
+import org.blockworld.world.Chunk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +35,7 @@ public abstract class AbstractChunkNode extends Node implements ChunkNode {
 		NEW, CALCULATED, UP2DATE, DIRTY
 	}
 
-	protected final BlockChunk<Block> terrainChunk;
+	protected final Chunk<Block> terrainChunk;
 	protected final List<Spatial> geometries;
 	protected ChunkState state = ChunkState.NEW;
 	protected final Lock updateLock;
@@ -42,19 +43,19 @@ public abstract class AbstractChunkNode extends Node implements ChunkNode {
 	protected abstract List<Geometry> createGeometries();
 
 	/**
-	 * Create a {@link ChunkNode}, supplying the {@link BlockChunk} that will serve as its geometry source.
+	 * Create a {@link ChunkNode}, supplying the {@link Chunk} that will serve as its geometry source.
 	 * 
 	 * @param terrainChunk
 	 *            - a BlockChunk that this {@link ChunkNode} will 'wrap' and create {@link Geometry} for in order to be rendered by JME.
 	 */
-	public AbstractChunkNode(final BlockChunk<Block> terrainChunk) {
-		super(BlockChunk.createName(terrainChunk));
+	public AbstractChunkNode(final Chunk<Block> terrainChunk) {
+		super(SparseMatrixChunk.createName(terrainChunk));
 		this.terrainChunk = terrainChunk;
 		updateLock = new ReentrantLock();
 		geometries = Lists.newArrayList();
 	}
 
-	public BlockChunk<Block> getTerrainChunk() {
+	public Chunk<Block> getTerrainChunk() {
 		return terrainChunk;
 	}
 
@@ -83,6 +84,9 @@ public abstract class AbstractChunkNode extends Node implements ChunkNode {
 			}
 			geometries.clear();
 			geometries.addAll(createGeometries());
+			for(Spatial s : geometries) {
+				attachChild(s);
+			}
 			terrainChunk.setDirty(false);
 			state = ChunkState.CALCULATED;
 		} finally {
@@ -111,9 +115,6 @@ public abstract class AbstractChunkNode extends Node implements ChunkNode {
 	public void update(Vector3f location, Vector3f direction) {
 		updateLock.lock();
 		try {
-			LOG.debug("Updating chunk geometries for {}", this);
-			LOG.debug("{} contains {} children", this, getChildren().size());
-			LOG.debug("{} adding {} geometries", this, geometries.size());
 			detachAllChildren();
 			for (final Spatial s : geometries) {
 				attachChild(s);

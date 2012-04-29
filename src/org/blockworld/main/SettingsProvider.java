@@ -24,6 +24,7 @@ import com.jme3.system.JmeSystem;
 public class SettingsProvider {
 	private static final Logger LOG = LoggerFactory.getLogger(SettingsProvider.class);
 	private static final File settingsFile = new File("blockworld.settings");
+
 	private final AppSettings defaultSettings;
 
 	public SettingsProvider(final AppSettings theDefaultSettings) {

@@ -3,9 +3,13 @@
  */
 package org.blockworld.main;
 
+import org.blockworld.scripting.ScriptEnvironment;
+import org.blockworld.world.node.ChunkSetController;
 import org.blockworld.world.node.ChunkSetNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import bsh.EvalError;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AppState;
@@ -25,8 +29,17 @@ public class BlockWorldApplication extends SimpleApplication implements AnalogLi
 	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(BlockWorldApplication.class);
 
+	private final ScriptEnvironment scripting;
+
 	public BlockWorldApplication(SettingsProvider provider) {
 		setSettings(provider.getAppSettings());
+		scripting = new ScriptEnvironment();
+		try {
+			scripting.registerPackage("org.blockworld.main");
+			scripting.setAccessibility(true);
+		} catch (EvalError e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -36,17 +49,21 @@ public class BlockWorldApplication extends SimpleApplication implements AnalogLi
 		flyCam.setMoveSpeed(6.0f);
 		getCamera().setLocation(new Vector3f(-31.046837f, 78.36219f, 54.47701f));
 		getCamera().setRotation(new Quaternion(0.07764202f, 0.91964334f, -0.3065641f, 0.23290835f));
-		
-	    DirectionalLight sunDirectionalLight = new DirectionalLight();
-	    sunDirectionalLight.setDirection(new Vector3f(-1, -1, -1).normalizeLocal());
-	    sunDirectionalLight.setColor(ColorRGBA.White);
-	    rootNode.addLight(sunDirectionalLight);
-	    final AmbientLight ambientLight = new AmbientLight();
-	    ambientLight.setColor(ColorRGBA.Yellow.mult(2));
-	    rootNode.addLight(ambientLight);
-		
+
+		DirectionalLight sunDirectionalLight = new DirectionalLight();
+		sunDirectionalLight.setDirection(new Vector3f(-1, -1, -1).normalizeLocal());
+		sunDirectionalLight.setColor(ColorRGBA.White);
+		rootNode.addLight(sunDirectionalLight);
+		final AmbientLight ambientLight = new AmbientLight();
+		ambientLight.setColor(ColorRGBA.Yellow.mult(2));
+		rootNode.addLight(ambientLight);
+
 		try {
 			ChunkSetNode chunkSet = new ChunkSetNode(assetManager);
+			ChunkSetController controller = new ChunkSetController(chunkSet, getCamera());
+			chunkSet.addControl(controller);
+			scripting.registerObject("chunkSet", chunkSet);
+			scripting.registerPackageForClass(Vector3f.class);
 			rootNode.attachChild(chunkSet);
 		} catch (Exception e) {
 			throw new RuntimeException(e);

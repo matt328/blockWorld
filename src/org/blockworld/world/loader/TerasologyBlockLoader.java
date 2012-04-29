@@ -7,6 +7,7 @@ package org.blockworld.world.loader;
 
 import org.blockworld.math.MathHelper;
 import org.blockworld.math.PerlinNoise;
+import org.blockworld.util.Stopwatch;
 import org.blockworld.world.BasicBlock;
 import org.blockworld.world.Block;
 import org.blockworld.world.Chunk;
@@ -143,7 +144,8 @@ public class TerasologyBlockLoader<T extends Chunk<Block>> implements BlockLoade
 
 	@Override
 	public void fill(final T volume) {
-		final long start = System.currentTimeMillis();
+		Stopwatch s = new Stopwatch(getClass());
+		s.start();
 		final BoundingBox bv = volume.getBoundingBox();
 		final float xExtent = bv.getXExtent();
 		final float yExtent = bv.getYExtent();
@@ -214,8 +216,7 @@ public class TerasologyBlockLoader<T extends Chunk<Block>> implements BlockLoade
 				}
 			}
 		}
-		final long duration = (System.currentTimeMillis() - start);
-		LOG.debug(String.format("Filled chunk of size %d, %d, %d in %dms", dimX, dimY, dimZ, duration));
+		s.stop("Filled Chunk in %dms");
 	}
 
 	byte getBlockTailpiece(final byte type, final float y) {
@@ -255,15 +256,7 @@ public class TerasologyBlockLoader<T extends Chunk<Block>> implements BlockLoade
 						final int offsetX = (x / rateX) * rateX;
 						final int offsetY = (y / rateY) * rateY;
 						final int offsetZ = (z / rateZ) * rateZ;
-						densityMap[x][y][z] = MathHelper.triLerp(x, y, z, densityMap[offsetX][offsetY][offsetZ],
-								densityMap[offsetX][rateY + offsetY][offsetZ],
-								densityMap[offsetX][offsetY][offsetZ + rateZ],
-								densityMap[offsetX][offsetY + rateY][offsetZ + rateZ],
-								densityMap[rateX + offsetX][offsetY][offsetZ],
-								densityMap[rateX + offsetX][offsetY + rateY][offsetZ],
-								densityMap[rateX + offsetX][offsetY][offsetZ + rateZ],
-								densityMap[rateX + offsetX][offsetY + rateY][offsetZ + rateZ],
-								offsetX, rateX + offsetX, offsetY, rateY + offsetY, offsetZ, offsetZ + rateZ);
+						densityMap[x][y][z] = MathHelper.triLerp(x, y, z, densityMap[offsetX][offsetY][offsetZ], densityMap[offsetX][rateY + offsetY][offsetZ], densityMap[offsetX][offsetY][offsetZ + rateZ], densityMap[offsetX][offsetY + rateY][offsetZ + rateZ], densityMap[rateX + offsetX][offsetY][offsetZ], densityMap[rateX + offsetX][offsetY + rateY][offsetZ], densityMap[rateX + offsetX][offsetY][offsetZ + rateZ], densityMap[rateX + offsetX][offsetY + rateY][offsetZ + rateZ], offsetX, rateX + offsetX, offsetY, rateY + offsetY, offsetZ, offsetZ + rateZ);
 					}
 				}
 			}

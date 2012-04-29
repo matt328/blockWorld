@@ -9,6 +9,7 @@ import gnu.trove.iterator.TIntIterator;
 import gnu.trove.set.hash.TIntHashSet;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.blockworld.asset.TextureAtlas;
 import org.blockworld.util.GeometryBuilder;
 import org.blockworld.world.Block;
-import org.blockworld.world.BlockChunk;
+import org.blockworld.world.Chunk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +87,7 @@ public class FacesMeshChunkNode extends AbstractChunkNode {
 	/**
 	 * @param terrainChunk
 	 */
-	public FacesMeshChunkNode(BlockChunk<Block> terrainChunk, ChunkSetNode world, TextureAtlas atlas) {
+	public FacesMeshChunkNode(Chunk<Block> terrainChunk, ChunkSetNode world, TextureAtlas atlas) {
 		super(terrainChunk);
 		this.world = world;
 		this.atlas = atlas;
@@ -101,13 +102,10 @@ public class FacesMeshChunkNode extends AbstractChunkNode {
 		indexes = ArrayListMultimap.create();
 		lightCoord = ArrayListMultimap.create();
 
-		LOG.debug(String.format("Tesselating volume %s", terrainChunk.getBoundingBox()));
-
 		int c = 0;
 		final TIntHashSet usedBlockTypes = new TIntHashSet();
 
-		final List<Block> leaves = terrainChunk.getLeaves();
-		LOG.debug("Check " + leaves.size() + " elements / volume can max contains " + terrainChunk.getBoundingBox().getVolume() / terrainChunk.getElementSize() + " elements");
+		final Collection<Block> leaves = terrainChunk.getLeaves();
 
 		final List<Geometry> result = Lists.newArrayList();
 
@@ -117,29 +115,14 @@ public class FacesMeshChunkNode extends AbstractChunkNode {
 
 			final EnumSet<Face> faces = checkFaces(blockPosition, data.getDimension() * 2);
 
-			// if (!faces.isEmpty()) {
-			// Box box = new Box(blockPosition, data.getDimension() / 2, data.getDimension() / 2, data.getDimension() / 2);
-			// Geometry debugBox = new Geometry("Box" + blockPosition, box);
-			// result.add(debugBox);
-			//
-			// if (faces.contains(Face.FACE_UP)) {
-			// debugBox.setMaterial(atlas.getBlueMaterial());
-			// } else {
-			// debugBox.setMaterial(atlas.getRedMaterial());
-			// }
-			// }
 			createFaces(blockPosition, data.getDimension(), faces, blockType);
-			// LOG.debug(String.format("Block at : %s, faces: %s", data.getCenter(), faces.toString()));
 			c++;
 			usedBlockTypes.add(blockType);
 		}
 
-		LOG.debug("Found " + c + " boxes with " + usedBlockTypes.size() + " different types");
-
 		TIntIterator it = usedBlockTypes.iterator();
 		while (it.hasNext()) {
 			int blockType = it.next();
-			LOG.debug("Build mesh for material " + blockType + " ...");
 			final Mesh chunkMesh = new Mesh();
 			chunkMesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices.get(blockType).toArray(new Vector3f[vertices.size()])));
 			chunkMesh.setBuffer(Type.Normal, 3, BufferUtils.createFloatBuffer(normals.get(blockType).toArray(new Vector3f[normals.size()])));
@@ -163,6 +146,7 @@ public class FacesMeshChunkNode extends AbstractChunkNode {
 		texCoord = null;
 		indexes = null;
 		lightCoord = null;
+		terrainChunk.clear();
 		long duration = (System.currentTimeMillis() - start);
 
 		LOG.debug(String.format("Tesselating %d blocks took %dms", leaves.size(), duration));
