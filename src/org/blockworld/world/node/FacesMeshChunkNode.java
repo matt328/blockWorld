@@ -95,7 +95,6 @@ public class FacesMeshChunkNode extends AbstractChunkNode {
 
 	@Override
 	protected List<Geometry> createGeometries() {
-		final long start = System.currentTimeMillis();
 		vertices = ArrayListMultimap.create();
 		normals = ArrayListMultimap.create();
 		texCoord = ArrayListMultimap.create();
@@ -147,9 +146,6 @@ public class FacesMeshChunkNode extends AbstractChunkNode {
 		indexes = null;
 		lightCoord = null;
 		terrainChunk.clear();
-		long duration = (System.currentTimeMillis() - start);
-
-		LOG.debug(String.format("Tesselating %d blocks took %dms", leaves.size(), duration));
 
 		List<Geometry> toReturn = GeometryBatchFactory.makeBatches(result);
 		return toReturn;

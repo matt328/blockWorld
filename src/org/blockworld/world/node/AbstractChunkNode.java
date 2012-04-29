@@ -75,7 +75,6 @@ public abstract class AbstractChunkNode extends Node implements ChunkNode {
 	 */
 	@Override
 	public boolean calculate() {
-		final long startTime = System.currentTimeMillis();
 		updateLock.lock();
 		try {
 			if (!terrainChunk.isDirty()) {
@@ -92,8 +91,6 @@ public abstract class AbstractChunkNode extends Node implements ChunkNode {
 		} finally {
 			updateLock.unlock();
 		}
-		final float duration = (System.currentTimeMillis() - startTime);
-		LOG.debug("Calculated Chunk in {}ms", duration);
 		return true;
 	}
 

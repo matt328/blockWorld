@@ -7,7 +7,6 @@ package org.blockworld.world.loader;
 
 import org.blockworld.math.MathHelper;
 import org.blockworld.math.PerlinNoise;
-import org.blockworld.util.Stopwatch;
 import org.blockworld.world.BasicBlock;
 import org.blockworld.world.Block;
 import org.blockworld.world.Chunk;
@@ -23,6 +22,7 @@ import com.jme3.math.Vector3f;
  * 
  */
 public class TerasologyBlockLoader<T extends Chunk<Block>> implements BlockLoader<T> {
+	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(TerasologyBlockLoader.class);
 	final PerlinNoise _pGen1;
 	final PerlinNoise _pGen2;
@@ -144,8 +144,6 @@ public class TerasologyBlockLoader<T extends Chunk<Block>> implements BlockLoade
 
 	@Override
 	public void fill(final T volume) {
-		Stopwatch s = new Stopwatch(getClass());
-		s.start();
 		final BoundingBox bv = volume.getBoundingBox();
 		final float xExtent = bv.getXExtent();
 		final float yExtent = bv.getYExtent();
@@ -216,7 +214,6 @@ public class TerasologyBlockLoader<T extends Chunk<Block>> implements BlockLoade
 				}
 			}
 		}
-		s.stop("Filled Chunk in %dms");
 	}
 
 	byte getBlockTailpiece(final byte type, final float y) {

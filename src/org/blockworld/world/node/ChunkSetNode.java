@@ -11,11 +11,12 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.commons.lang3.Range;
 import org.blockworld.asset.BlockTextureAtlas;
 import org.blockworld.asset.TextureAtlas;
-import org.blockworld.util.Stopwatch;
 import org.blockworld.util.WorldGrid;
 import org.blockworld.world.Block;
 import org.blockworld.world.Chunk;
@@ -36,22 +37,43 @@ import com.jme3.scene.Node;
  * 
  */
 public class ChunkSetNode extends Node {
-	private static final int CHUNK_DIMENSION = 12;
-	@SuppressWarnings("unused")
+	private static final int CHUNK_DIMENSION = 8;
 	private static final Logger LOG = LoggerFactory.getLogger(ChunkSetNode.class);
 	private final TextureAtlas atlas;
 	private final Map<Vector3f, AbstractChunkNode> createdChunks;
 	private final BlockLoader<Chunk<Block>> loader;
 
-	private static final List<Vector3f> offsets = Lists.newArrayList(new Vector3f[] { new Vector3f(CHUNK_DIMENSION, 0.0f, CHUNK_DIMENSION), new Vector3f(CHUNK_DIMENSION, 0.0f, 0.0f), new Vector3f(CHUNK_DIMENSION, 0.0f, CHUNK_DIMENSION), new Vector3f(0.0f, 0.0f, CHUNK_DIMENSION), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, CHUNK_DIMENSION), new Vector3f(CHUNK_DIMENSION, 0.0f, CHUNK_DIMENSION), new Vector3f(CHUNK_DIMENSION, 0.0f, 0.0f), new Vector3f(CHUNK_DIMENSION, 0.0f, CHUNK_DIMENSION), });
+	private static final List<Vector3f> offsets = Lists.newArrayList(new Vector3f[] 
+    {
+			new Vector3f(CHUNK_DIMENSION, 0.0f, CHUNK_DIMENSION),
+			new Vector3f(CHUNK_DIMENSION, 0.0f, 0.0f),
+			new Vector3f(CHUNK_DIMENSION, 0.0f, -CHUNK_DIMENSION),
+			
+			new Vector3f(0.0f, 0.0f, CHUNK_DIMENSION),
+			new Vector3f(0.0f, 0.0f, 0.0f),
+			new Vector3f(0.0f, 0.0f, -CHUNK_DIMENSION),
+			
+			new Vector3f(-CHUNK_DIMENSION, 0.0f, -CHUNK_DIMENSION),
+			new Vector3f(-CHUNK_DIMENSION, 0.0f, 0.0f),
+			new Vector3f(-CHUNK_DIMENSION, 0.0f, -CHUNK_DIMENSION)
+	});
 
-	private final ExecutorService threadPool = Executors.newFixedThreadPool(7);
+	private final ExecutorService threadPool;
 	private final BlockingQueue<AbstractChunkNode> chunksToFill;
 	private final BlockingQueue<AbstractChunkNode> chunksToCalculate;
 	private final BlockingQueue<AbstractChunkNode> chunksToAdd;
 
 	public ChunkSetNode(AssetManager theAssetManager) throws Exception {
-		chunksToFill = new LinkedBlockingQueue<AbstractChunkNode>(1500);
+		threadPool = Executors.newFixedThreadPool(8,
+				new ThreadFactory() {
+					@Override
+					public Thread newThread(final Runnable r) {
+						final Thread th = new Thread(r);
+						th.setDaemon(true);
+						return th;
+					}
+				});
+		chunksToFill = new LinkedBlockingQueue<AbstractChunkNode>(15);
 		chunksToCalculate = new LinkedBlockingQueue<AbstractChunkNode>(15);
 		chunksToAdd = new LinkedBlockingQueue<AbstractChunkNode>(15);
 		atlas = new BlockTextureAtlas(theAssetManager);
@@ -60,25 +82,6 @@ public class ChunkSetNode extends Node {
 
 		threadPool.execute(new FillChunkDispatcher());
 		threadPool.execute(new CalculateChunkDispatcher());
-
-		createNewChunkNode(new Vector3f(00.0f, 64.0f, 00.0f));
-		// createChunk(new Vector3f(00.0f, 96.0f, 00.0f));
-		// createChunk(new Vector3f(16.0f, 64.0f, 00.0f));
-		// createChunk(new Vector3f(16.0f, 96.0f, 00.0f));
-		// createChunk(new Vector3f(32.0f, 64.0f, 00.0f));
-		// createChunk(new Vector3f(32.0f, 96.0f, 00.0f));
-		// createChunk(new Vector3f(48.0f, 64.0f, 00.0f));
-		// createChunk(new Vector3f(48.0f, 96.0f, 00.0f));
-		//
-		// createChunk(new Vector3f(00.0f, 64.0f, 16.0f));
-		// createChunk(new Vector3f(16.0f, 64.0f, 16.0f));
-		// createChunk(new Vector3f(32.0f, 64.0f, 16.0f));
-		// createChunk(new Vector3f(48.0f, 64.0f, 16.0f));
-		//
-		// createChunk(new Vector3f(00.0f, 64.0f, 32.0f));
-		// createChunk(new Vector3f(16.0f, 64.0f, 32.0f));
-		// createChunk(new Vector3f(32.0f, 64.0f, 32.0f));
-		// createChunk(new Vector3f(48.0f, 64.0f, 16.0f));
 	}
 
 	private class FillChunkDispatcher implements Runnable {
@@ -88,7 +91,6 @@ public class ChunkSetNode extends Node {
 			while (true) {
 				try {
 					AbstractChunkNode node = chunksToFill.take();
-					LOG.debug("Fill Chunk Dispatcher took a chunk");
 					threadPool.execute(new FillChunkThread(node));
 				} catch (InterruptedException iex) {
 					LOG.debug("Fill Chunk Dispatcher shutting down");
@@ -118,7 +120,6 @@ public class ChunkSetNode extends Node {
 			while (true) {
 				try {
 					AbstractChunkNode node = chunksToCalculate.take();
-					LOG.debug("Calculate Chunk Dispatcher took a chunk");
 					threadPool.execute(new CalculateChunkThread(node));
 				} catch (InterruptedException iex) {
 					LOG.debug("Calculate Chunk Dispatcher Shutdown");
@@ -153,7 +154,6 @@ public class ChunkSetNode extends Node {
 	public void update(Vector3f location, Vector3f direction) {
 		AbstractChunkNode node = chunksToAdd.poll();
 		if (node != null) {
-			LOG.debug("Attaching Child");
 			attachChild(node);
 		}
 		for (Vector3f v : getSurroundingChunkPositions(location)) {
@@ -191,21 +191,6 @@ public class ChunkSetNode extends Node {
 			createdChunks.put(position, chunkNode);
 			chunksToFill.add(chunkNode);
 		}
-	}
-
-	private void createChunk(Vector3f position) {
-		Chunk<Block> chunk = new HashMapChunk<Block>(CHUNK_DIMENSION, 0.5f, position);
-
-		loader.fill(chunk);
-
-		FacesMeshChunkNode terrainNode = new FacesMeshChunkNode(chunk, this, atlas);
-		terrainNode.calculate();
-		terrainNode.update(Vector3f.ZERO, Vector3f.ZERO);
-		createdChunks.put(position, terrainNode);
-		Stopwatch s = new Stopwatch(getClass());
-		s.start();
-		attachChild(terrainNode);
-		s.stop("Attached Child in %dms");
 	}
 
 	/**
