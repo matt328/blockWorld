@@ -9,9 +9,7 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.blockworld.world.BasicBlock;
-import org.blockworld.world.Block;
-import org.blockworld.world.SparseMatrixChunk;
+import org.blockworld.world.ArrayChunk;
 import org.blockworld.world.Chunk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +33,7 @@ public abstract class AbstractChunkNode extends Node implements ChunkNode {
 		NEW, CALCULATED, UP2DATE, DIRTY
 	}
 
-	protected final Chunk<Block> terrainChunk;
+	protected final Chunk terrainChunk;
 	protected final List<Spatial> geometries;
 	protected ChunkState state = ChunkState.NEW;
 	protected final Lock updateLock;
@@ -48,19 +46,19 @@ public abstract class AbstractChunkNode extends Node implements ChunkNode {
 	 * @param terrainChunk
 	 *            - a BlockChunk that this {@link ChunkNode} will 'wrap' and create {@link Geometry} for in order to be rendered by JME.
 	 */
-	public AbstractChunkNode(final Chunk<Block> terrainChunk) {
-		super(SparseMatrixChunk.createName(terrainChunk));
+	public AbstractChunkNode(final Chunk terrainChunk) {
+		super(ArrayChunk.createName(terrainChunk));
 		this.terrainChunk = terrainChunk;
 		updateLock = new ReentrantLock();
 		geometries = Lists.newArrayList();
 	}
 
-	public Chunk<Block> getTerrainChunk() {
+	public Chunk getTerrainChunk() {
 		return terrainChunk;
 	}
 
 	@Override
-	public Block getBlock(Vector3f location) {
+	public int getBlock(Vector3f location) {
 		return terrainChunk.getBlock(location);
 	}
 
@@ -83,7 +81,7 @@ public abstract class AbstractChunkNode extends Node implements ChunkNode {
 			}
 			geometries.clear();
 			geometries.addAll(createGeometries());
-			for(Spatial s : geometries) {
+			for (Spatial s : geometries) {
 				attachChild(s);
 			}
 			terrainChunk.setDirty(false);
@@ -104,7 +102,7 @@ public abstract class AbstractChunkNode extends Node implements ChunkNode {
 	@Override
 	public void setBlock(int blockType, Vector3f location) {
 		state = ChunkState.DIRTY;
-		terrainChunk.setBlock(new BasicBlock(blockType, terrainChunk.getElementSize(), location), location);
+		terrainChunk.setBlock(blockType, location);
 		calculate();
 	}
 

@@ -9,7 +9,6 @@ import gnu.trove.iterator.TIntIterator;
 import gnu.trove.set.hash.TIntHashSet;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -18,12 +17,10 @@ import jme3tools.optimize.GeometryBatchFactory;
 import org.apache.commons.lang3.ArrayUtils;
 import org.blockworld.asset.TextureAtlas;
 import org.blockworld.util.GeometryBuilder;
-import org.blockworld.world.Block;
 import org.blockworld.world.Chunk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -87,7 +84,7 @@ public class FacesMeshChunkNode extends AbstractChunkNode {
 	/**
 	 * @param terrainChunk
 	 */
-	public FacesMeshChunkNode(Chunk<Block> terrainChunk, ChunkSetNode world, TextureAtlas atlas) {
+	public FacesMeshChunkNode(Chunk terrainChunk, ChunkSetNode world, TextureAtlas atlas) {
 		super(terrainChunk);
 		this.world = world;
 		this.atlas = atlas;
@@ -104,19 +101,23 @@ public class FacesMeshChunkNode extends AbstractChunkNode {
 		int c = 0;
 		final TIntHashSet usedBlockTypes = new TIntHashSet();
 
-		final Collection<Block> leaves = terrainChunk.getLeaves();
-
 		final List<Geometry> result = Lists.newArrayList();
 
-		for (Block data : leaves) {
-			final int blockType = data.getType();
-			final Vector3f blockPosition = data.getCenter();
-
-			final EnumSet<Face> faces = checkFaces(blockPosition, data.getDimension() * 2);
-
-			createFaces(blockPosition, data.getDimension(), faces, blockType);
-			c++;
-			usedBlockTypes.add(blockType);
+		for (int x = 0; x < terrainChunk.getBoundingBox().getXExtent(); x++) {
+			for (int y = 0; y < terrainChunk.getBoundingBox().getYExtent(); y++) {
+				for (int z = 0; z < terrainChunk.getBoundingBox().getZExtent(); z++) {
+					Vector3f blockPosition = new Vector3f(x, y, z);
+					final int blockType = terrainChunk.getBlock(blockPosition);
+					if (blockType != 0) {
+						final EnumSet<Face> faces = checkFaces(blockPosition, 1.0f);
+						if (!faces.isEmpty()) {
+							createFaces(blockPosition, 0.5f, faces, blockType);
+							c++;
+							usedBlockTypes.add(blockType);
+						}
+					}
+				}
+			}
 		}
 
 		TIntIterator it = usedBlockTypes.iterator();
@@ -156,7 +157,7 @@ public class FacesMeshChunkNode extends AbstractChunkNode {
 		final float y = blockPosition.y;
 		final float z = blockPosition.z;
 		LOG.trace(String.format("Check faces for %f, %f, %f and %f", x, y, z, dimension));
-		final Block currentBlock = terrainChunk.getBlock(blockPosition);
+		final int currentBlock = terrainChunk.getBlock(blockPosition);
 		EnumSet<Face> faces = EnumSet.noneOf(Face.class);
 		if (needFace(currentBlock, x + dimension, y, z)) {
 			faces.add(Face.FACE_RIGHT);
@@ -179,7 +180,7 @@ public class FacesMeshChunkNode extends AbstractChunkNode {
 		return faces;
 	}
 
-	private boolean needFace(final Block currentBlock, final float x, final float y, final float z) {
+	private boolean needFace(final int currentBlock, final float x, final float y, final float z) {
 		if (terrainChunk.getBoundingBox().contains(new Vector3f(x, y, z))) {
 			return needFace(currentBlock, terrainChunk.getBlock(new Vector3f(x, y, z)));
 		} else {
@@ -194,33 +195,21 @@ public class FacesMeshChunkNode extends AbstractChunkNode {
 				// TODO: Something fishy still going on here
 				return false;
 			}
-			Block neighborBlock = neighborChunk.getBlock(new Vector3f(x, y, z));
+			int neighborBlock = neighborChunk.getBlock(new Vector3f(x, y, z));
 			return needFace(currentBlock, neighborBlock);
 		}
 	}
 
-	private boolean needFace(final Block current, final Block neighborToCheck) {
-		Preconditions.checkNotNull(current, "current must never be null");
-		if (neighborToCheck == null) {
-			return true;
-		}
-		if (isTranslucent(current)) {
+	private boolean needFace(final int currentType, final int neighborType) {
+		if (atlas.isTransparent(currentType)) {
 			// current is translucent
 			// we need a face if the neighbor block is not translucent
 			// we need a face if the neighbor block is also translucent but with a different type
-			return !isTranslucent(neighborToCheck) || current.getType() != neighborToCheck.getType();
+			return !atlas.isTransparent(neighborType) || currentType != neighborType;
 		}
 		// normal current
 		// we need a face if the neighbor is translucent
-		return isTranslucent(neighborToCheck);
-	}
-
-	private boolean isTranslucent(final Block checkBlock) {
-		return isTranslucent(checkBlock.getType());
-	}
-
-	private boolean isTranslucent(final Integer Type) {
-		return atlas.isTransparent(Type);
+		return atlas.isTransparent(neighborType);
 	}
 
 	private boolean createFaces(Vector3f position, final float dimension, final EnumSet<Face> faces, final int bloxelType) {

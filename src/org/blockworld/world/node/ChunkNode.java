@@ -5,8 +5,6 @@
  */
 package org.blockworld.world.node;
 
-import org.blockworld.world.Block;
-
 import com.jme3.math.Vector3f;
 
 /**
@@ -20,7 +18,7 @@ public interface ChunkNode {
 
 	void setBlock(int blockType, Vector3f location);
 
-	Block getBlock(Vector3f location);
-	
+	int getBlock(Vector3f location);
+
 	void update(final Vector3f location, final Vector3f direction);
 }

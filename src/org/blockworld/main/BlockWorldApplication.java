@@ -21,7 +21,7 @@ import com.jme3.math.Vector3f;
  * @author Matt
  * 
  */
-public class BlockWorldApplication extends SimpleApplication implements AnalogListener, BlockWorldApplicationInterface {
+public class BlockWorldApplication extends SimpleApplication implements AnalogListener {
 
 	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(BlockWorldApplication.class);
@@ -44,7 +44,7 @@ public class BlockWorldApplication extends SimpleApplication implements AnalogLi
 		AppState startupAppState = new StartupAppState();
 		stateManager.attach(startupAppState);
 		flyCam.setMoveSpeed(6.0f);
-		getCamera().setLocation(new Vector3f(-19.52766f, 71.91339f, -8.846332f));
+		getCamera().setLocation(new Vector3f(0.0f, 10.0f, 0.0f));
 		// getCamera().setRotation(new Quaternion(0.07764202f, 0.91964334f, -0.3065641f, 0.23290835f));
 
 		DirectionalLight sunDirectionalLight = new DirectionalLight();

@@ -5,6 +5,8 @@
  */
 package org.blockworld.scripting;
 
+import java.util.BitSet;
+
 import org.blockworld.world.node.Face;
 import org.junit.After;
 import org.junit.Before;
@@ -40,4 +42,11 @@ public class ScriptEnvironmentTest {
 		env = null;
 	}
 
+	public static void main(String[] args) {
+		BitSet b = new BitSet(2);
+		b.set(1);
+		System.out.println(b.toString());
+		System.out.println(b.length());
+	}
+	
 }

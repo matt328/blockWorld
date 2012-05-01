@@ -5,9 +5,12 @@
  */
 package org.blockworld.world;
 
-import java.util.Collection;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.math.Vector3f;
@@ -16,16 +19,14 @@ import com.jme3.math.Vector3f;
  * @author Matt Teeter
  * 
  */
-public class HashMapChunk<T extends Block> implements Chunk<T> {
-
-	private final Map<Vector3f, T> blockMap;
+public class HashMapChunk implements Chunk {
+	private static final Logger LOG = LoggerFactory.getLogger(HashMapChunk.class);
+	private final Map<Vector3f, Integer> blockMap;
 	private final BoundingBox boundingBox;
-	private final float elementSize;
 	private boolean dirty;
 
-	public HashMapChunk(final int dimension, final float elementSize, final Vector3f center) {
-		this.elementSize = elementSize;
-		boundingBox = new BoundingBox(center, dimension, dimension, dimension);
+	public HashMapChunk(final int dimension, final int height, final Vector3f center) {
+		boundingBox = new BoundingBox(center, dimension, height, dimension);
 		blockMap = Maps.newHashMap();
 	}
 
@@ -35,14 +36,20 @@ public class HashMapChunk<T extends Block> implements Chunk<T> {
 	}
 
 	@Override
-	public void setBlock(T data, Vector3f position) {
+	public void setBlock(int data, Vector3f position) {
+		LOG.debug("Putting data: " + position.toString());
 		blockMap.put(position, data);
 		dirty = true;
 	}
 
 	@Override
-	public T getBlock(Vector3f position) {
-		return blockMap.get(position);
+	public int getBlock(Vector3f position) {
+		Preconditions.checkNotNull(position);
+		if (blockMap.containsKey(position)) {
+			return blockMap.get(position);
+		} else {
+			return 0;
+		}
 	}
 
 	@Override
@@ -54,11 +61,6 @@ public class HashMapChunk<T extends Block> implements Chunk<T> {
 	@Override
 	public BoundingBox getBoundingBox() {
 		return boundingBox;
-	}
-
-	@Override
-	public float getElementSize() {
-		return elementSize;
 	}
 
 	@Override
@@ -80,11 +82,6 @@ public class HashMapChunk<T extends Block> implements Chunk<T> {
 	@Override
 	public void setDirty(boolean dirty) {
 		this.dirty = dirty;
-	}
-
-	@Override
-	public Collection<T> getLeaves() {
-		return blockMap.values();
 	}
 
 }

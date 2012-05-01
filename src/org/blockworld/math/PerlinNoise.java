@@ -143,7 +143,16 @@ public class PerlinNoise {
 
 	private float noise_fsc(final float i) {
 		// using bagel's cosine table instead
-		return 0.5f * (1.0f - perlin_cosTable[(int) (i * perlin_PI) % perlin_TWOPI]);
+		float iPerlinPI = i * perlin_PI;
+		float fPerlinPIMod2Pi = iPerlinPI % perlin_TWOPI;
+		int iPerlinPIMod2PI = (int)fPerlinPIMod2Pi;
+		
+		float cosTable = perlin_cosTable[iPerlinPIMod2PI];
+		float oneMinusCosTable = 1.0f - cosTable;
+		
+		float halfoneMinusCosTable = 0.5f * oneMinusCosTable; 
+		
+		return halfoneMinusCosTable;
 	}
 
 	public void noiseDetail(final int lod) {

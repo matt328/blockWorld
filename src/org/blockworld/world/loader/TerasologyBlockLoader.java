@@ -7,8 +7,6 @@ package org.blockworld.world.loader;
 
 import org.blockworld.math.MathHelper;
 import org.blockworld.math.PerlinNoise;
-import org.blockworld.world.BasicBlock;
-import org.blockworld.world.Block;
 import org.blockworld.world.Chunk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +19,7 @@ import com.jme3.math.Vector3f;
  * @author Matt Teeter
  * 
  */
-public class TerasologyBlockLoader<T extends Chunk<Block>> implements BlockLoader<T> {
+public class TerasologyBlockLoader<T extends Chunk> implements BlockLoader<T> {
 	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(TerasologyBlockLoader.class);
 	final PerlinNoise _pGen1;
@@ -155,7 +153,8 @@ public class TerasologyBlockLoader<T extends Chunk<Block>> implements BlockLoade
 		final float offsetX = center.x;
 		final float offsetY = center.y;
 		final float offsetZ = center.z;
-		final float elementSize = volume.getElementSize();
+		// TODO: Make elementSize a constant somewhere.
+		final float elementSize = 0.5f;
 
 		boolean densityDataInitialized = false;
 		float[][][] densityData = null;
@@ -177,13 +176,13 @@ public class TerasologyBlockLoader<T extends Chunk<Block>> implements BlockLoade
 						caveNoise += _pGen4.noise(c.x * 0.04f, c.y * 0.04f, c.z * 0.04f) * 0.15f;
 						caveNoise += _pGen4.noise(c.x * 0.08f, c.y * 0.08f, c.z * 0.08f) * 0.05f;
 						if (caveNoise > 0.24f) {
-							volume.setBlock(new BasicBlock(4, elementSize, c), c);
+							volume.setBlock(4, c);
 						}
 						continue;
 					}
 					if (c.y < WATER_LEVEL_Y && c.y > 0) {
 						// Ocean
-						volume.setBlock(new BasicBlock(6, elementSize, c), c);
+						volume.setBlock(6, c);
 					}
 					// perlin noise based rules ...
 					if (!densityDataInitialized) {
@@ -194,19 +193,19 @@ public class TerasologyBlockLoader<T extends Chunk<Block>> implements BlockLoade
 					if ((dens >= 0.01f && dens < 0.012f)) {
 						// The outer layer is made of dirt and grass.
 						if (firstBlockHeight == -1) {
-							volume.setBlock(new BasicBlock(getBlockTailpiece(getBlockTypeForPosition(c.y, 1.0f), c.y), elementSize, c), c);
+							volume.setBlock(getBlockTailpiece(getBlockTypeForPosition(c.y, 1.0f), c.y), c);
 							// Generate lakes
 							final float lakeIntensity = calcLakeIntensity(x + offsetX, z + offsetZ);
 							// System.out.println("ld:" + lakeIntensity);
 							if (lakeIntensity < 0.1) {
-								volume.setBlock(new BasicBlock(7, elementSize, c), c);
+								volume.setBlock(7, c);
 							}
 							firstBlockHeight = c.y;
 						} else {
-							volume.setBlock(new BasicBlock(getBlockTypeForPosition(c.y, 1.0f - ((firstBlockHeight - c.y) / SAMPLE_RATE_3D_VERT)), elementSize, c), c);
+							volume.setBlock(getBlockTypeForPosition(c.y, 1.0f - ((firstBlockHeight - c.y) / SAMPLE_RATE_3D_VERT)), c);
 						}
 					} else if (dens >= 0.012f) {
-						volume.setBlock(new BasicBlock(getBlockTailpiece(getBlockTypeForPosition(c.y, 0.2f), c.y), elementSize, c), c);
+						volume.setBlock(getBlockTailpiece(getBlockTypeForPosition(c.y, 0.2f), c.y), c);
 						if (firstBlockHeight == -1) {
 							firstBlockHeight = c.y;
 						}
