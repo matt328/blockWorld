@@ -64,7 +64,7 @@ public class NoiseTester extends JFrame {
 		@Override
 		public void paint(Graphics g) {
 			Graphics2D g2d = (Graphics2D) g;
-			Function noise = new PerlinNoiseFunction(1.0f, 2, "Megan Rae".hashCode());
+			Function noise = new PerlinNoiseFunction(1.75f, 2, "Megan Rae".hashCode());
 			Function scale = new ScalePoint(noise, 0.02f);
 			Stopwatch s = new Stopwatch(NoiseTester.class);
 			s.start();
