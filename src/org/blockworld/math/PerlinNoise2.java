@@ -5,7 +5,7 @@
  */
 package org.blockworld.math;
 
-import org.blockworld.math.Noise.NoiseQuality;
+import org.blockworld.math.NoiseUtil.NoiseQuality;
 
 /**
  * Perlin noise class loosely inspired by the techniques used in libnoise.
@@ -13,7 +13,7 @@ import org.blockworld.math.Noise.NoiseQuality;
  * @author Matt Teeter
  * 
  */
-public class PerlinNoise2 {
+public class PerlinNoise2 implements Noise {
 	/**
 	 * Frequency of the first octave.
 	 */
@@ -100,6 +100,7 @@ public class PerlinNoise2 {
 		this.seed = seed;
 	}
 
+	@Override
 	public float getValue(float x, float y, float z) {
 		float value = 0.0f;
 		float signal = 0.0f;
@@ -121,7 +122,7 @@ public class PerlinNoise2 {
 			// Get the coherent-noise value from the input value and add it to the
 			// final result.
 			seed = (this.seed + curOctave) & 0xffffffff;
-			signal = Noise.gradientCoherentNoise3D(nx, ny, nz, seed, noiseQuality);
+			signal = NoiseUtil.gradientCoherentNoise3D(nx, ny, nz, seed, noiseQuality);
 			value += signal * curPersistence;
 
 			// Prepare the next octave.

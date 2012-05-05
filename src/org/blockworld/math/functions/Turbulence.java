@@ -15,19 +15,23 @@ import org.blockworld.math.PerlinNoise2;
  */
 public class Turbulence implements Function {
 
-	private final PerlinNoise2 xNoise;
-	private final PerlinNoise2 yNoise;
-	private final PerlinNoise2 zNoise;
-	private final float power;
-	private final Function source;
+	private final Function mainSource;
+	private final Function xSource;
+	private final Function ySource;
+	private final Function zSource;
+	private final float xPower;
+	private final float yPower;
+	private final float zPower;
 
-	public Turbulence(Function source, int seed, int octaves, float frequency, float power) {
-		this.source = source;
-		this.power = power;
-
-		xNoise = new PerlinNoise2(frequency, octaves, seed);
-		yNoise = new PerlinNoise2(frequency, octaves, seed);
-		zNoise = new PerlinNoise2(frequency, octaves, seed);
+	public Turbulence(Function mainSource, Function ySource, float yPower) {
+		this.mainSource = mainSource;
+		this.ySource = ySource;
+		this.xSource = new Constant(0.0f);
+		this.zSource = new Constant(0.0f);
+		
+		this.yPower = yPower;
+		this.xPower = 1.0f;
+		this.zPower = 1.0f;
 	}
 
 	@Override
@@ -56,12 +60,12 @@ public class Turbulence implements Function {
 		y2 = y + (11213.0f / 65536.0f);
 		z2 = z + (44845.0f / 65536.0f);
 		
-		float xDistort = x + (xNoise.getValue(x0, y0, z0) * power);
-		float yDistort = y + (yNoise.getValue(x1, y1, z1) * power);
-		float zDistort = z + (zNoise.getValue(x2, y2, z2) * power);
+		float xDistort = x + (xSource.get(x0, y0, z0) * xPower);
+		float yDistort = y + (ySource.get(x1, y1, z1) * yPower);
+		float zDistort = z + (zSource.get(x2, y2, z2) * zPower);
 
 		// Retrieve the output value at the offsetted input value instead of the
 		// original input value.
-		return source.get(xDistort, yDistort, zDistort);
+		return mainSource.get(xDistort, yDistort, zDistort);
 	}
 }
