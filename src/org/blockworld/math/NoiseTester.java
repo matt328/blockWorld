@@ -79,31 +79,32 @@ public class NoiseTester extends JFrame implements PropertyChangeListener {
 		private static final int HEIGHT = 256;
 		private static final int WIDTH = 1500;
 
+		private Function groundBase;
+		private Function caveFunction;
+		
 		public PaintPanel() {
 			super();
 			Dimension size = new Dimension(WIDTH, HEIGHT);
 			setMaximumSize(size);
 			setPreferredSize(size);
 			setMinimumSize(size);
-		}
-
-		@Override
-		public void paint(Graphics g) {
-			Graphics2D g2d = (Graphics2D) g;
 			// Terrain Noise
 			Function constNeg1 = new Constant(-1.0f);
 			Function const1 = new Constant(1.0f);
 			Function groundShape = new PerlinNoiseFunction(NoiseType.PERLIN, 1.75f, 2, "Matt".hashCode());
 			Function groundGradient = new Gradient(0.0f, 1.0f);
 			Function groundTurbulence = new Turbulence(groundGradient, groundShape, 0.4f);
-			Function groundBase = new Selector(groundTurbulence, constNeg1, const1, 5.3f);
-
-			Function scale = new ScalePoint(groundBase, 0.02f);
-
-			// Cave Noise
+			Function groundSelector = new Selector(groundTurbulence, constNeg1, const1, 5.3f);
+			groundBase = new ScalePoint(groundSelector, 0.02f);
+			
 			Function ridged = new PerlinNoiseFunction(NoiseType.RIDGED_MULTIFRACTAL, caveFrequency, caveOctaveCount, "Matt".hashCode());
 			Function ridgedThreshold = new Selector(ridged, constNeg1, const1, caveThreshold);
-			Function scaleRidged = new ScalePoint(ridgedThreshold, 0.01f);
+			caveFunction = new ScalePoint(ridgedThreshold, 0.01f);
+		}
+
+		@Override
+		public void paint(Graphics g) {
+			Graphics2D g2d = (Graphics2D) g;
 
 			Stopwatch s = new Stopwatch(NoiseTester.class);
 			s.start();
@@ -113,7 +114,7 @@ public class NoiseTester extends JFrame implements PropertyChangeListener {
 				for (int y = 0; y < HEIGHT; y++) {
 					float mx = x * 1.0f;
 					float my = y * 1.0f;
-					float finalNoise = scaleRidged.get(mx, my, 1.0f);
+					float finalNoise = caveFunction.get(mx, my, 1.0f);
 					finalNoise = Interpolation.scale(finalNoise, -1.0f, 1.0f, 0.0f, 1.0f);
 					min = Math.min(min, finalNoise);
 					max = Math.max(max, finalNoise);
@@ -123,7 +124,6 @@ public class NoiseTester extends JFrame implements PropertyChangeListener {
 					g2d.drawLine(x, y, x, y);
 				}
 			}
-			System.out.println("Min/Max: " + min + "/" + max);
 			s.stop("Generated Noise in %dms");
 		}
 	}

@@ -22,4 +22,12 @@ public class Constant implements Function {
 		return constant;
 	}
 
+	public float getConstant() {
+		return constant;
+	}
+
+	public void setConstant(float constant) {
+		this.constant = constant;
+	}
+
 }

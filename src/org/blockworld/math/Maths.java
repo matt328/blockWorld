@@ -5,7 +5,7 @@ package org.blockworld.math;
  * 
  * Focus on using floats rather than doubles for speed
  * 
- * @author Mike
+ * @author Matt Teeter
  * 
  */
 public final class Maths {

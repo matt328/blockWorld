@@ -6,12 +6,14 @@
 package org.blockworld.math.functions;
 
 /**
+ * A Function operates on 3 given parameters and produces a single output value.
+ * 
  * @author Matt Teeter
- *
+ * 
  */
 public interface Function {
 	/**
-	 * Performs a function on the inputs given.  The inputs must be constrained between 0 and 1.
+	 * Performs a function on the inputs given. The inputs must be constrained between 0 and 1.
 	 * 
 	 * @param x
 	 * @param y

@@ -15,5 +15,8 @@ public interface Noise {
 		PERLIN, RIDGED_MULTIFRACTAL;
 	}
 	
+	void setFrequency(float frequency);
+	void setOctaveCount(int octaves);
+	void setSeed(int seed);
 	float getValue(float x, float y, float z);
 }

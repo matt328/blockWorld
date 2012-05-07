@@ -27,6 +27,7 @@ import com.jme3.scene.Spatial;
  * 
  */
 public abstract class AbstractChunkNode extends Node implements ChunkNode {
+	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractChunkNode.class);
 
 	enum ChunkState {

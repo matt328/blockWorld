@@ -13,8 +13,9 @@ import org.blockworld.math.NoiseUtil.NoiseQuality;
 import com.google.common.base.Preconditions;
 
 /**
- * @author Matt Teeter
+ * Noise generator that generates ridged multifractal noise, based on Perlin noise. Parameters can be changed after construction, but it should be noted that doing so while generating a continuous area of noise will disrupt the continuity.
  * 
+ * @author Matt Teeter
  */
 public class RidgedMultifractalNoise implements Noise {
 	private float DEFAULT_RIDGED_FREQUENCY = 1.0f;
@@ -71,8 +72,52 @@ public class RidgedMultifractalNoise implements Noise {
 		this.lacunarity = DEFAULT_RIDGED_LACUNARITY;
 		this.noiseQuality = DEFAULT_RIDGED_QUALITY;
 		this.seed = seed;
-		spectralWeights = new TFloatArrayList(octaveCount);
 		calculateSpectralWeights();
+	}
+
+	public float getFrequency() {
+		return frequency;
+	}
+
+	@Override
+	public void setFrequency(float frequency) {
+		this.frequency = frequency;
+	}
+
+	public float getLacunarity() {
+		return lacunarity;
+	}
+
+	public void setLacunarity(float lacunarity) {
+		this.lacunarity = lacunarity;
+		calculateSpectralWeights();
+	}
+
+	public NoiseQuality getNoiseQuality() {
+		return noiseQuality;
+	}
+
+	public void setNoiseQuality(NoiseQuality noiseQuality) {
+		this.noiseQuality = noiseQuality;
+	}
+
+	public int getOctaveCount() {
+		return octaveCount;
+	}
+
+	@Override
+	public void setOctaveCount(int octaveCount) {
+		this.octaveCount = octaveCount;
+		calculateSpectralWeights();
+	}
+
+	public int getSeed() {
+		return seed;
+	}
+
+	@Override
+	public void setSeed(int seed) {
+		this.seed = seed;
 	}
 
 	@Override
@@ -127,6 +172,7 @@ public class RidgedMultifractalNoise implements Noise {
 	private void calculateSpectralWeights() {
 		float h = 1.0f;
 		float frequency = 1.0f;
+		spectralWeights = new TFloatArrayList(octaveCount);
 		for (int i = 0; i < octaveCount; i++) {
 			spectralWeights.add((float) Math.pow(frequency, -h));
 			frequency *= lacunarity;

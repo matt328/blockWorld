@@ -11,8 +11,8 @@ package org.blockworld.math.functions;
  */
 public class ScalePoint implements Function {
 
-	private final float scale;
-	private final Function source;
+	private float scale;
+	private Function source;
 
 	public ScalePoint(final Function source, final float scale) {
 		this.source = source;
@@ -22,6 +22,22 @@ public class ScalePoint implements Function {
 	@Override
 	public float get(float x, float y, float z) {
 		return source.get(x * scale, y * scale, z * scale);
+	}
+
+	public float getScale() {
+		return scale;
+	}
+
+	public void setScale(float scale) {
+		this.scale = scale;
+	}
+
+	public Function getSource() {
+		return source;
+	}
+
+	public void setSource(Function source) {
+		this.source = source;
 	}
 
 }

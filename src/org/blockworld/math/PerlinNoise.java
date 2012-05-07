@@ -1,221 +1,188 @@
+/**
+ * PerlinNoise2
+ * Author: Matt Teeter
+ * Apr 30, 2012
+ */
 package org.blockworld.math;
 
-import java.util.Random;
+import org.blockworld.math.NoiseUtil.NoiseQuality;
 
-public class PerlinNoise {
-	protected static final int PERLIN_YWRAPB = 4;
-	protected static final int PERLIN_YWRAP = 1 << PERLIN_YWRAPB;
-	protected static final int PERLIN_ZWRAPB = 8;
-	protected static final int PERLIN_ZWRAP = 1 << PERLIN_ZWRAPB;
-	protected static final int PERLIN_SIZE = 4095;
-	private static final float PERLIN_MIN_AMPLITUDE = 0.001f;
-	protected int perlin_octaves = 4; // default to medium smooth
-	protected float perlin_amp_falloff = 0.5f; // 50% reduction/octave
-	protected int perlin_TWOPI, perlin_PI;
-	protected float[] perlin_cosTable;
-	protected float perlin[];
-	protected Random perlinRandom;
+/**
+ * Perlin noise class loosely inspired by the techniques used in libnoise.
+ * 
+ * @author Matt Teeter
+ * 
+ */
+public class PerlinNoise implements Noise {
+	/**
+	 * Frequency of the first octave.
+	 */
+	private float frequency;
 
+	/**
+	 * Frequency multiplier between successive octaves.
+	 */
+	private float lacunarity;
+
+	/**
+	 * Quality of the Perlin noise.
+	 */
+	private NoiseQuality noiseQuality;
+
+	/**
+	 * Total number of octaves that generate the Perlin noise.
+	 */
+	private int octaveCount;
+
+	/**
+	 * Persistence of the Perlin noise.
+	 */
+	private float persistence;
+
+	/**
+	 * Seed value used by the Perlin-noise function.
+	 */
+	private int seed;
+
+	/**
+	 * Creates a new Perlin Noise generator with some reasonable defaults.
+	 */
 	public PerlinNoise() {
-		this(System.nanoTime());
+		this.frequency = 1.0f;
+		this.lacunarity = 2.0f;
+		this.noiseQuality = NoiseQuality.STD;
+		this.octaveCount = 6;
+		this.persistence = 0.5f;
+		this.seed = 0;
 	}
 
-	public PerlinNoise(final long seed) {
-		noiseSeed(seed);
+	/**
+	 * Creates a new Perlin Noise generator with the given parameters, and reasonable defaults for the others.
+	 * 
+	 * @param frequency
+	 *            Frequency of the first octave.
+	 * @param octaveCount
+	 *            Total number of octaves that generate the Perlin noise.
+	 * @param seed
+	 *            Seed value used by the Perlin-noise function.
+	 */
+	public PerlinNoise(float frequency, int octaveCount, int seed) {
+		this.frequency = frequency;
+		this.lacunarity = 2.0f;
+		this.noiseQuality = NoiseQuality.STD;
+		this.octaveCount = octaveCount;
+		this.persistence = 0.5f;
+		this.seed = seed;
 	}
 
-	public float multiFractalNoise(float x, float y, float z, final int octaves, final float lacunarity) {
-		float result = 0;
-		for (int i = 1; i <= octaves; i++) {
-			result += noise(x, y, z) * Math.pow(lacunarity, -0.76471 * i);
+	/**
+	 * Creates a new Perlin Noise generator with the given parameters.
+	 * 
+	 * @param frequency
+	 *            Frequency of the first octave.
+	 * @param lacunarity
+	 *            Frequency multiplier between successive octaves.
+	 * @param noiseQuality
+	 *            Quality of the Perlin noise.
+	 * @param octaveCount
+	 *            Total number of octaves that generate the Perlin noise.
+	 * @param persistence
+	 *            Persistence of the Perlin noise.
+	 * @param seed
+	 *            Seed value used by the Perlin-noise function.
+	 */
+	public PerlinNoise(float frequency, float lacunarity, NoiseQuality noiseQuality, int octaveCount, float persistence, int seed) {
+		this.frequency = frequency;
+		this.lacunarity = lacunarity;
+		this.noiseQuality = noiseQuality;
+		this.octaveCount = octaveCount;
+		this.persistence = persistence;
+		this.seed = seed;
+	}
+
+	@Override
+	public float getValue(float x, float y, float z) {
+		float value = 0.0f;
+		float signal = 0.0f;
+		float curPersistence = 1.0f;
+		float nx, ny, nz;
+		int seed;
+
+		x *= frequency;
+		y *= frequency;
+		z *= frequency;
+
+		for (int curOctave = 0; curOctave < octaveCount; curOctave++) {
+			// TODO: Make sure that these floating-point values have the same range as a 32-
+			// bit integer so that we can pass them to the coherent-noise functions.
+			nx = (x);
+			ny = (y);
+			nz = (z);
+
+			// Get the coherent-noise value from the input value and add it to the
+			// final result.
+			seed = (this.seed + curOctave) & 0xffffffff;
+			signal = NoiseUtil.gradientCoherentNoise3D(nx, ny, nz, seed, noiseQuality);
+			value += signal * curPersistence;
+
+			// Prepare the next octave.
 			x *= lacunarity;
 			y *= lacunarity;
 			z *= lacunarity;
+			curPersistence *= persistence;
 		}
-		return result;
+
+		return value;
 	}
 
-	/**
-	 * Computes the Perlin noise function value at point x.
-	 */
-	public float noise(final float x) {
-		// is this legit? it's a dumb way to do it (but repair it later)
-		return noise(x, 0f, 0f);
+	public float getFrequency() {
+		return frequency;
 	}
 
-	/**
-	 * Computes the Perlin noise function value at the point x, y.
-	 */
-	public float noise(final float x, final float y) {
-		return noise(x, y, 0f);
+	@Override
+	public void setFrequency(float frequency) {
+		this.frequency = frequency;
 	}
 
-	/**
-	 * Computes the Perlin noise function value at x, y, z.
-	 */
-	public float noise(float x, float y, float z) {
-		if (perlin == null) {
-			if (perlinRandom == null) {
-				perlinRandom = new Random();
-			}
-			perlin = new float[PERLIN_SIZE + 1];
-			for (int i = 0; i < PERLIN_SIZE + 1; i++) {
-				perlin[i] = perlinRandom.nextFloat(); // (float)Math.random();
-			}
-
-			perlin_cosTable = SinCosLUT.cosLUT;
-			perlin_TWOPI = perlin_PI = SinCosLUT.SC_PERIOD;
-			perlin_PI >>= 1;
-		}
-
-		if (x < 0) {
-			x = -x;
-		}
-		if (y < 0) {
-			y = -y;
-		}
-		if (z < 0) {
-			z = -z;
-		}
-
-		int xi = (int) x, yi = (int) y, zi = (int) z;
-		float xf = (x - xi);
-		float yf = (y - yi);
-		float zf = (z - zi);
-		float rxf, ryf;
-
-		float r = 0;
-		float ampl = 0.5f;
-
-		float n1, n2, n3;
-
-		for (int i = 0; i < perlin_octaves; i++) {
-			int of = xi + (yi << PERLIN_YWRAPB) + (zi << PERLIN_ZWRAPB);
-
-			rxf = noise_fsc(xf);
-			ryf = noise_fsc(yf);
-
-			n1 = perlin[of & PERLIN_SIZE];
-			n1 += rxf * (perlin[(of + 1) & PERLIN_SIZE] - n1);
-			n2 = perlin[(of + PERLIN_YWRAP) & PERLIN_SIZE];
-			n2 += rxf * (perlin[(of + PERLIN_YWRAP + 1) & PERLIN_SIZE] - n2);
-			n1 += ryf * (n2 - n1);
-
-			of += PERLIN_ZWRAP;
-			n2 = perlin[of & PERLIN_SIZE];
-			n2 += rxf * (perlin[(of + 1) & PERLIN_SIZE] - n2);
-			n3 = perlin[(of + PERLIN_YWRAP) & PERLIN_SIZE];
-			n3 += rxf * (perlin[(of + PERLIN_YWRAP + 1) & PERLIN_SIZE] - n3);
-			n2 += ryf * (n3 - n2);
-
-			n1 += noise_fsc(zf) * (n2 - n1);
-
-			r += n1 * ampl;
-			ampl *= perlin_amp_falloff;
-
-			// break if amp has no more impact
-			if (ampl < PERLIN_MIN_AMPLITUDE) {
-				break;
-			}
-
-			xi <<= 1;
-			xf *= 2;
-			yi <<= 1;
-			yf *= 2;
-			zi <<= 1;
-			zf *= 2;
-
-			if (xf >= 1.0f) {
-				xi++;
-				xf--;
-			}
-			if (yf >= 1.0f) {
-				yi++;
-				yf--;
-			}
-			if (zf >= 1.0f) {
-				zi++;
-				zf--;
-			}
-		}
-		return r;
+	public float getLacunarity() {
+		return lacunarity;
 	}
 
-	private float noise_fsc(final float i) {
-		// using bagel's cosine table instead
-		float iPerlinPI = i * perlin_PI;
-		float fPerlinPIMod2Pi = iPerlinPI % perlin_TWOPI;
-		int iPerlinPIMod2PI = (int)fPerlinPIMod2Pi;
-		
-		float cosTable = perlin_cosTable[iPerlinPIMod2PI];
-		float oneMinusCosTable = 1.0f - cosTable;
-		
-		float halfoneMinusCosTable = 0.5f * oneMinusCosTable; 
-		
-		return halfoneMinusCosTable;
+	public void setLacunarity(float lacunarity) {
+		this.lacunarity = lacunarity;
 	}
 
-	public void noiseDetail(final int lod) {
-		if (lod > 0) {
-			perlin_octaves = lod;
-		}
+	public NoiseQuality getNoiseQuality() {
+		return noiseQuality;
 	}
 
-	public void noiseDetail(final int lod, final float falloff) {
-		if (lod > 0) {
-			perlin_octaves = lod;
-		}
-		if (falloff > 0) {
-			perlin_amp_falloff = falloff;
-		}
+	public void setNoiseQuality(NoiseQuality noiseQuality) {
+		this.noiseQuality = noiseQuality;
 	}
 
-	public void noiseSeed(final long what) {
-		if (perlinRandom == null) {
-			perlinRandom = new Random();
-		}
-		perlinRandom.setSeed(what);
-		perlin = null;
+	public int getOctaveCount() {
+		return octaveCount;
 	}
 
-	private float ridge(float n, final float offset) {
-		n = Math.abs(n);
-		n = offset - n;
-		n = n * n;
-		return n;
+	@Override
+	public void setOctaveCount(int octaveCount) {
+		this.octaveCount = octaveCount;
 	}
 
-	public float ridgedMultiFractalNoise(float x, float y, float z, final int octaves, final float lacunarity, final float gain, final float offset) {
-		float frequency = 1f;
-		float signal;
+	public float getPersistence() {
+		return persistence;
+	}
 
-		/*
-		 * Fetch the first noise octave.
-		 */
-		signal = ridge(noise(x, y, z), offset);
-		float result = signal;
-		float weight;
+	public void setPersistence(float persistence) {
+		this.persistence = persistence;
+	}
 
-		for (int i = 1; i <= octaves; i++) {
-			x *= lacunarity;
-			y *= lacunarity;
-			z *= lacunarity;
+	public int getSeed() {
+		return seed;
+	}
 
-			weight = gain * signal;
-
-			if (weight > 1.0f) {
-				weight = 1.0f;
-			} else if (weight < 0.0f) {
-				weight = 0.0f;
-			}
-
-			signal = ridge(noise(x, y, z), offset);
-
-			signal *= weight;
-			result += signal * Math.pow(frequency, -0.86461f);
-			frequency *= lacunarity;
-		}
-
-		return result;
+	@Override
+	public void setSeed(int seed) {
+		this.seed = seed;
 	}
 }

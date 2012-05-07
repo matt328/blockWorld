@@ -20,7 +20,7 @@ import org.blockworld.util.WorldGrid;
 import org.blockworld.world.Chunk;
 import org.blockworld.world.HashMapChunk;
 import org.blockworld.world.loader.BlockLoader;
-import org.blockworld.world.loader.TerasologyBlockLoader;
+import org.blockworld.world.loader.DummyBlockLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +67,7 @@ public class ChunkSetNode extends Node {
 		chunksToAdd = new LinkedBlockingQueue<AbstractChunkNode>(15);
 		atlas = new BlockTextureAtlas(theAssetManager);
 		createdChunks = Maps.newHashMap();
-		loader = new TerasologyBlockLoader<Chunk>("M");
+		loader = new DummyBlockLoader<Chunk>("M");
 
 		threadPool.execute(new FillChunkDispatcher());
 		threadPool.execute(new CalculateChunkDispatcher());
