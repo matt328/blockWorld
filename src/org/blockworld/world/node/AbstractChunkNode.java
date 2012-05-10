@@ -83,6 +83,7 @@ public abstract class AbstractChunkNode extends Node implements ChunkNode {
 			geometries.clear();
 			geometries.addAll(createGeometries());
 			for (Spatial s : geometries) {
+				LOG.debug("Attaching Child");
 				attachChild(s);
 			}
 			terrainChunk.setDirty(false);

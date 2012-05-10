@@ -19,7 +19,7 @@ public class BasicChunk implements Chunk {
 	private final Vector3f dimensions;
 	private boolean dirty;
 	private boolean empty;
-	
+
 	private final int offsetX;
 	private final int offsetY;
 	private final int offsetZ;
@@ -27,8 +27,16 @@ public class BasicChunk implements Chunk {
 	public BasicChunk(Vector3f dimensions, Vector3f position) {
 		this.dimensions = dimensions;
 		Vector3f gridPosition = worldCoordsToGridCoords((int) dimensions.x, position);
-		boundingBox = new BoundingBox(position, dimensions.x, dimensions.y, dimensions.z);
+
+		float centerX = position.x * (dimensions.x);
+		float centerY = (dimensions.y / 2);
+		float centerZ = position.z * (dimensions.z);
+
+		boundingBox = new BoundingBox(new Vector3f(centerX, centerY, centerZ), dimensions.x / 2, dimensions.y / 2, dimensions.z / 2);
 		data = new int[(int) dimensions.x][(int) dimensions.y][(int) dimensions.z];
+		
+		//TODO: Something still messed up calculating offsets that do not cross the origin.
+		
 		offsetX = (int) ((int) ((dimensions.x / 2)) + (gridPosition.x * dimensions.x));
 		offsetY = 0;
 		offsetZ = (int) ((int) ((dimensions.z / 2)) + (gridPosition.z * dimensions.z));
@@ -38,6 +46,11 @@ public class BasicChunk implements Chunk {
 
 	public void setBlock(int type, Vector3f position) {
 		Vector3f nPosition = globalToLocal(position);
+
+		Preconditions.checkArgument(nPosition.x >= 0, "Position X Value (%s) produces translated value less than zero", position.x);
+		Preconditions.checkArgument(nPosition.y >= 0, "Position Y Value (%s) produces translated value less than zero", position.y);
+		Preconditions.checkArgument(nPosition.z >= 0, "Position Z Value (%s) produces translated value less than zero", position.z);
+
 		Preconditions.checkArgument(nPosition.x < dimensions.x, "Position X Value (%s) would cause access outside of bounds (Max X: %s)", nPosition.x, dimensions.x - 1);
 		Preconditions.checkArgument(nPosition.y < dimensions.y, "Position Y Value (%s) would cause access outside of bounds (Max Y: %s)", nPosition.y, dimensions.y - 1);
 		Preconditions.checkArgument(nPosition.z < dimensions.z, "Position Z Value (%s) would cause access outside of bounds (Max Z: %s)", nPosition.z, dimensions.z - 1);
@@ -47,6 +60,13 @@ public class BasicChunk implements Chunk {
 
 	public int getBlock(Vector3f position) {
 		Vector3f nPosition = globalToLocal(position);
+		Preconditions.checkArgument(nPosition.x >= 0, "Position X Value (%s) produces translated value less than zero", position.x);
+		Preconditions.checkArgument(nPosition.y >= 0, "Position Y Value (%s) produces translated value less than zero", position.y);
+		Preconditions.checkArgument(nPosition.z >= 0, "Position Z Value (%s) produces translated value less than zero", position.z);
+
+		Preconditions.checkArgument(nPosition.x < dimensions.x, "Position X Value (%s) would cause access outside of bounds (Max X: %s)", nPosition.x, dimensions.x - 1);
+		Preconditions.checkArgument(nPosition.y < dimensions.y, "Position Y Value (%s) would cause access outside of bounds (Max Y: %s)", nPosition.y, dimensions.y - 1);
+		Preconditions.checkArgument(nPosition.z < dimensions.z, "Position Z Value (%s) would cause access outside of bounds (Max Z: %s)", nPosition.z, dimensions.z - 1);
 		return data[(int) nPosition.x][(int) nPosition.y][(int) nPosition.z];
 	}
 
