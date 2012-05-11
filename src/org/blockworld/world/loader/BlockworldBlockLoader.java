@@ -49,15 +49,19 @@ public class BlockworldBlockLoader {
 		int ey = (int) (chunkCenter.y + chunk.getBoundingBox().getYExtent());
 		int ez = (int) (chunkCenter.z + chunk.getBoundingBox().getZExtent());
 
-		for (int x = sx; x < ex - 1; x++) {
-			for (int y = sy; y < ey - 1; y++) {
-				for (int z = sz; z < ez - 1; z++) {
+		LOG.debug(String.format("Chunk Center: %s, x from %d to %d", chunkCenter, sx, ex));
+		int c = 0;
+		for (int x = sx; x < ex; x++) {
+			c++;
+			for (int y = sy; y < ey; y++) {
+				for (int z = sz; z < ez; z++) {
 					float noise = groundBase.get(x, (chunk.getBoundingBox().getYExtent() * 2) - y, z);
-					//LOG.debug(String.format("Setting block %s: %f", new Vector3f(x, y, z), noise));
+					// LOG.debug(String.format("Setting block %s: %f", new Vector3f(x, y, z), noise));
 					chunk.setBlock(noise > 0.0f ? 1 : 0, new Vector3f(x, y, z));
 				}
 			}
 		}
+		LOG.debug(String.format("Generated %d blocks in the X Direction", c));
 		chunk.setDirty(true);
 	}
 

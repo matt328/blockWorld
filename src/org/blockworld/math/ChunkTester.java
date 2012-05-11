@@ -58,17 +58,25 @@ public class ChunkTester extends SimpleApplication {
 	public void simpleInitApp() {
 		BasicChunk chunk = new BasicChunk(new Vector3f(16, 256, 16), Vector3f.ZERO);
 		BasicChunk chunk2 = new BasicChunk(new Vector3f(16, 256, 16), new Vector3f(1.0f, 0.0f, 0.0f));
+		BasicChunk chunk3 = new BasicChunk(new Vector3f(16, 256, 16), new Vector3f(2.0f, 0.0f, 0.0f));
+		BasicChunk chunk4 = new BasicChunk(new Vector3f(16, 256, 16), new Vector3f(2.0f, 0.0f, 1.0f));
 		BlockworldBlockLoader loader = new BlockworldBlockLoader();
 
 		loader.fill(chunk);
 		loader.fill(chunk2);
+		loader.fill(chunk3);
+		loader.fill(chunk4);
 		
 		TextureAtlas atlas = new BlockTextureAtlas(this.assetManager);
 
 		MeshChunkNode node = new MeshChunkNode(chunk, atlas);
 		MeshChunkNode node2 = new MeshChunkNode(chunk2, atlas);
+		MeshChunkNode node3 = new MeshChunkNode(chunk3, atlas);
+		MeshChunkNode node4 = new MeshChunkNode(chunk4, atlas);
 		node.calculate();
 		node2.calculate();
+		node3.calculate();
+		node4.calculate();
 		
 		DirectionalLight sunDirectionalLight = new DirectionalLight();
 		sunDirectionalLight.setDirection(new Vector3f(-1, -1, -1).normalizeLocal());
@@ -80,7 +88,9 @@ public class ChunkTester extends SimpleApplication {
 
 		rootNode.attachChild(node);
 		rootNode.attachChild(node2);
-		getCamera().setLocation(new Vector3f(4.8676667f, 499.2639f, -8.6687975f));
+		rootNode.attachChild(node3);
+		rootNode.attachChild(node4);
+		getCamera().setLocation(new Vector3f(4.8676667f, 128.0f, -8.6687975f));
 		getCamera().setRotation(new Quaternion(0.27165264f, -0.2043419f, 0.05914175f, 0.93859017f));
 
 	}

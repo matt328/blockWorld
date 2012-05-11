@@ -32,6 +32,7 @@ import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
+import com.jme3.scene.shape.Box;
 import com.jme3.util.BufferUtils;
 
 /**
@@ -84,13 +85,20 @@ public class MeshChunkNode extends AbstractChunkNode {
 		int ex = (int) (chunkCenter.x + terrainChunk.getBoundingBox().getXExtent());
 		int ey = (int) (chunkCenter.y + terrainChunk.getBoundingBox().getYExtent());
 		int ez = (int) (chunkCenter.z + terrainChunk.getBoundingBox().getZExtent());
-		
+		LOG.debug(String.format("Mesh Chunk Node: Chunk Center: %s, x from %d to %d", chunkCenter, sx, ex));
+		int cx = 0;
+		List<Geometry> result = Lists.newArrayList();
 		for (int x = sx; x < ex; x++) {
+			cx++;
 			for (int y = sy; y < ey; y++) {
 				for (int z = sz; z < ez; z++) {
 					final Vector3f blockPosition = new Vector3f(x, y, z);
 					int blockType = terrainChunk.getBlock(blockPosition);
 					if (blockType != 0) {
+						Box b = new Box(blockPosition, 0.25f, 0.25f, 0.25f);
+						Geometry g = new Geometry("Box", b);
+						g.setMaterial(atlas.getBlueMaterial());
+						result.add(g);
 						final EnumSet<Face> faces = checkFaces(blockPosition, 1.0f);
 						if (!faces.isEmpty()) {
 							createFaces(blockPosition, 0.5f, faces, blockType);
@@ -101,9 +109,9 @@ public class MeshChunkNode extends AbstractChunkNode {
 				}
 			}
 		}
-
+		LOG.debug(String.format("Mesh Chunk Node: Generated %d blocks in the X Direction", cx));
 		TIntIterator it = usedBlockTypes.iterator();
-		List<Geometry> result = Lists.newArrayList();
+		
 		while (it.hasNext()) {
 			int blockType = it.next();
 			final Mesh chunkMesh = new Mesh();

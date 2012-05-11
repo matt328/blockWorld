@@ -26,22 +26,25 @@ public class BasicChunk implements Chunk {
 
 	public BasicChunk(Vector3f dimensions, Vector3f position) {
 		this.dimensions = dimensions;
-		Vector3f gridPosition = worldCoordsToGridCoords((int) dimensions.x, position);
-
-		float centerX = position.x * (dimensions.x);
+		float centerX = position.x * (dimensions.x) + 1;
 		float centerY = (dimensions.y / 2);
-		float centerZ = position.z * (dimensions.z);
+		float centerZ = position.z * (dimensions.z) + 1;
 
 		boundingBox = new BoundingBox(new Vector3f(centerX, centerY, centerZ), dimensions.x / 2, dimensions.y / 2, dimensions.z / 2);
 		data = new int[(int) dimensions.x][(int) dimensions.y][(int) dimensions.z];
-		
-		//TODO: Something still messed up calculating offsets that do not cross the origin.
-		
-		offsetX = (int) ((int) ((dimensions.x / 2)) + (gridPosition.x * dimensions.x));
+
+		offsetX = (int) ((dimensions.x / 2) - centerX);
 		offsetY = 0;
-		offsetZ = (int) ((int) ((dimensions.z / 2)) + (gridPosition.z * dimensions.z));
+		offsetZ = (int) ((dimensions.z / 2) - centerZ);
 		dirty = false;
 		empty = true;
+	}
+
+	public Vector3f globalToLocal(Vector3f globalPosition) {
+		int nx = (int) (globalPosition.x + offsetX);
+		int ny = (int) (globalPosition.y + offsetY);
+		int nz = (int) (globalPosition.z + offsetZ);
+		return new Vector3f(nx, ny, nz);
 	}
 
 	public void setBlock(int type, Vector3f position) {
@@ -68,13 +71,6 @@ public class BasicChunk implements Chunk {
 		Preconditions.checkArgument(nPosition.y < dimensions.y, "Position Y Value (%s) would cause access outside of bounds (Max Y: %s)", nPosition.y, dimensions.y - 1);
 		Preconditions.checkArgument(nPosition.z < dimensions.z, "Position Z Value (%s) would cause access outside of bounds (Max Z: %s)", nPosition.z, dimensions.z - 1);
 		return data[(int) nPosition.x][(int) nPosition.y][(int) nPosition.z];
-	}
-
-	public Vector3f globalToLocal(Vector3f globalPosition) {
-		int nx = (int) (globalPosition.x + offsetX);
-		int ny = (int) (globalPosition.y + offsetY);
-		int nz = (int) (globalPosition.z + offsetZ);
-		return new Vector3f(nx, ny, nz);
 	}
 
 	public Vector3f worldCoordsToGridCoords(int chunkDimension, Vector3f location) {
