@@ -15,25 +15,24 @@ import com.jme3.scene.control.Control;
 
 /**
  * @author Matt Teeter
- * 
  */
-public class ChunkSetController extends AbstractControl {
-	private final ChunkSetNode chunkSet;
+public class WorldController extends AbstractControl {
+	private final WorldNode worldNode;
 	private final Camera camera;
 
-	public ChunkSetController(ChunkSetNode chunkSet, Camera camera) {
-		this.chunkSet = chunkSet;
+	public WorldController(WorldNode world, Camera camera) {
+		this.worldNode = world;
 		this.camera = camera;
 	}
 
 	@Override
 	public Control cloneForSpatial(Spatial spatial) {
-		return new ChunkSetController(chunkSet, camera);
+		return new WorldController(worldNode, camera);
 	}
 
 	@Override
 	protected void controlUpdate(float tpf) {
-		chunkSet.update(camera.getLocation(), Vector3f.ZERO);
+		worldNode.update(camera.getLocation(), Vector3f.ZERO);
 	}
 
 	@Override

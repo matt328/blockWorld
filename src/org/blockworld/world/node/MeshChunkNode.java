@@ -180,7 +180,7 @@ public class MeshChunkNode extends AbstractChunkNode {
 		if (terrainChunk.hasBlock(new Vector3f(x, y, z))) {
 			return needFace(currentBlock, terrainChunk.getBlock(new Vector3f(x, y, z)));
 		} else {
-			return needFace(currentBlock, loader.getAdHocBlock(new Vector3f(x, y, z), terrainChunk.getBoundingBox().getYExtent() / 2));
+			return needFace(currentBlock, loader.getAdHocBlock(new Vector3f(x, y, z), terrainChunk.getBoundingBox().getYExtent() * 2));
 		}
 	}
 

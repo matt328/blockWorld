@@ -4,7 +4,7 @@
 package org.blockworld.main;
 
 import org.blockworld.scripting.ScriptEnvironment;
-import org.blockworld.world.node.ChunkSetController;
+import org.blockworld.world.node.WorldController;
 import org.blockworld.world.node.ChunkSetNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +57,7 @@ public class BlockWorldApplication extends SimpleApplication implements AnalogLi
 
 		try {
 			ChunkSetNode chunkSet = new ChunkSetNode(assetManager);
-			ChunkSetController controller = new ChunkSetController(chunkSet, getCamera());
+			WorldController controller = new WorldController(chunkSet, getCamera());
 			chunkSet.addControl(controller);
 //			scripting.registerObject("chunkSet", chunkSet);
 //			scripting.registerPackageForClass(Vector3f.class);

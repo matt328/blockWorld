@@ -28,12 +28,13 @@ public class WorldGrid {
 	}
 
 	public static Collection<Vector3f> getSurroundingChunkPositions(Vector3f location, int radius, Vector3f chunkDimensions) {
+		Vector3f translated = new Vector3f(translate(location.x, (int) chunkDimensions.x), location.y, translate(location.z, (int) chunkDimensions.z));
 		Collection<Vector3f> offsets = getOffsetsForRadius(radius);
 		Collection<Vector3f> positions = Lists.newArrayListWithExpectedSize(offsets.size());
 		for (Vector3f offset : offsets) {
-			float x = offset.x * chunkDimensions.x;
+			float x = offset.x + translated.x;
 			float y = offset.y;
-			float z = offset.z * chunkDimensions.z;
+			float z = offset.z + translated.z;
 			positions.add(new Vector3f(x, y, z));
 		}
 		return positions;

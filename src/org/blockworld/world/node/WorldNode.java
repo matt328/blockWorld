@@ -5,6 +5,7 @@
  */
 package org.blockworld.world.node;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -43,10 +44,10 @@ public class WorldNode extends Node {
 	private final BlockingQueue<AbstractChunkNode> chunksToCalculate;
 	private final BlockingQueue<AbstractChunkNode> chunksToAdd;
 
-	public WorldNode(final int chunkRadius, Vector3f chunkDimensions, AssetManager theAssetManager) throws Exception {
+	public WorldNode(final int chunkRadius, Vector3f chunkDimensions, AssetManager theAssetManager) {
 		this.chunkRadius = chunkRadius;
 		this.chunkDimensions = chunkDimensions;
-		threadPool = Executors.newFixedThreadPool(8, new ThreadFactory() {
+		threadPool = Executors.newFixedThreadPool(4, new ThreadFactory() {
 			@Override
 			public Thread newThread(final Runnable r) {
 				final Thread th = new Thread(r);
@@ -54,9 +55,9 @@ public class WorldNode extends Node {
 				return th;
 			}
 		});
-		chunksToFill = new LinkedBlockingQueue<AbstractChunkNode>(15);
-		chunksToCalculate = new LinkedBlockingQueue<AbstractChunkNode>(15);
-		chunksToAdd = new LinkedBlockingQueue<AbstractChunkNode>(15);
+		chunksToFill = new LinkedBlockingQueue<AbstractChunkNode>(1500);
+		chunksToCalculate = new LinkedBlockingQueue<AbstractChunkNode>(1500);
+		chunksToAdd = new LinkedBlockingQueue<AbstractChunkNode>(1500);
 		atlas = new BlockTextureAtlas(theAssetManager);
 		loadedChunks = Maps.newHashMap();
 		loader = new BlockworldBlockLoader();
@@ -76,7 +77,8 @@ public class WorldNode extends Node {
 		if (node != null) {
 			attachChild(node);
 		}
-		for (Vector3f v : WorldGrid.getSurroundingChunkPositions(location, chunkRadius, chunkDimensions)) {
+		Collection<Vector3f> positions = WorldGrid.getSurroundingChunkPositions(location, chunkRadius, chunkDimensions);
+		for (Vector3f v : positions) {
 			createNewChunkNode(v);
 		}
 	}
