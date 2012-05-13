@@ -19,6 +19,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.blockworld.asset.TextureAtlas;
 import org.blockworld.util.GeometryBuilder;
 import org.blockworld.world.Chunk;
+import org.blockworld.world.loader.BlockworldBlockLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,14 +33,16 @@ import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
-import com.jme3.scene.shape.Box;
 import com.jme3.util.BufferUtils;
 
 /**
- * @author Matt Teeter
+ * {@link MeshChunkNode}'s are the geometric representation of a chunk to JME. This class takes in a {@link Chunk} and turns it's raw data into a {@link List} of {@link Geometry} that JME can render. Right now this process is incredibly tedious since for each solid block, all 6 of its neighbors must be checked to determine if a face for that direction needs to be created. It is currently capable of calculating {@link Geometry} for a {@link Chunk} of 16x256x16 size in a few hundred milliseconds which should be acceptable.
  * 
+ * @author Matt Teeter
  */
 public class MeshChunkNode extends AbstractChunkNode {
+	private final BlockworldBlockLoader loader;
+	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(MeshChunkNode.class);
 	private static final ArrayList<Integer> TRIANGLE_INDIZES = Lists.newArrayList(2, 0, 1, 1, 3, 2);
 	private static final Vector3f NORMAL_UP = new Vector3f(0, 1, 0);
@@ -64,8 +67,9 @@ public class MeshChunkNode extends AbstractChunkNode {
 
 	private final TextureAtlas atlas;
 
-	public MeshChunkNode(Chunk terrainChunk, TextureAtlas atlas) {
+	public MeshChunkNode(Chunk terrainChunk, TextureAtlas atlas, BlockworldBlockLoader loader) {
 		super(terrainChunk);
+		this.loader = loader;
 		this.atlas = atlas;
 		vertices = ArrayListMultimap.create();
 		normals = ArrayListMultimap.create();
@@ -85,7 +89,7 @@ public class MeshChunkNode extends AbstractChunkNode {
 		int ex = (int) (chunkCenter.x + terrainChunk.getBoundingBox().getXExtent());
 		int ey = (int) (chunkCenter.y + terrainChunk.getBoundingBox().getYExtent());
 		int ez = (int) (chunkCenter.z + terrainChunk.getBoundingBox().getZExtent());
-		LOG.debug(String.format("Mesh Chunk Node: Chunk Center: %s, x from %d to %d", chunkCenter, sx, ex));
+		// LOG.debug(String.format("Mesh Chunk Node: Chunk Center: %s, x from %d to %d", chunkCenter, sx, ex));
 		int cx = 0;
 		List<Geometry> result = Lists.newArrayList();
 		for (int x = sx; x < ex; x++) {
@@ -95,10 +99,10 @@ public class MeshChunkNode extends AbstractChunkNode {
 					final Vector3f blockPosition = new Vector3f(x, y, z);
 					int blockType = terrainChunk.getBlock(blockPosition);
 					if (blockType != 0) {
-						Box b = new Box(blockPosition, 0.25f, 0.25f, 0.25f);
-						Geometry g = new Geometry("Box", b);
-						g.setMaterial(atlas.getBlueMaterial());
-						result.add(g);
+						// Box b = new Box(blockPosition, 0.25f, 0.25f, 0.25f);
+						// Geometry g = new Geometry("Box", b);
+						// g.setMaterial(atlas.getBlueMaterial());
+						// result.add(g);
 						final EnumSet<Face> faces = checkFaces(blockPosition, 1.0f);
 						if (!faces.isEmpty()) {
 							createFaces(blockPosition, 0.5f, faces, blockType);
@@ -109,9 +113,9 @@ public class MeshChunkNode extends AbstractChunkNode {
 				}
 			}
 		}
-		LOG.debug(String.format("Mesh Chunk Node: Generated %d blocks in the X Direction", cx));
+
 		TIntIterator it = usedBlockTypes.iterator();
-		
+
 		while (it.hasNext()) {
 			int blockType = it.next();
 			final Mesh chunkMesh = new Mesh();
@@ -137,10 +141,11 @@ public class MeshChunkNode extends AbstractChunkNode {
 		texCoord = null;
 		indexes = null;
 		lightCoord = null;
+		// TODO: Cut down on memory usage until we need to actually hold onto this data.
 		terrainChunk.clear();
 
 		List<Geometry> toReturn = GeometryBatchFactory.makeBatches(result);
-		LOG.debug(String.format("Generated %d faces", c));
+		// LOG.debug(String.format("Generated %d faces", c));
 		return toReturn;
 	}
 
@@ -150,37 +155,38 @@ public class MeshChunkNode extends AbstractChunkNode {
 		final float z = blockPosition.z;
 		final int currentBlock = terrainChunk.getBlock(blockPosition);
 		EnumSet<Face> faces = EnumSet.noneOf(Face.class);
-		if (needFace(currentBlock, x + dimension, y, z)) {
+		if (needFace(currentBlock, x + dimension, y, z, Face.FACE_RIGHT)) {
 			faces.add(Face.FACE_RIGHT);
 		}
-		if (needFace(currentBlock, x - dimension, y, z)) {
+		if (needFace(currentBlock, x - dimension, y, z, Face.FACE_LEFT)) {
 			faces.add(Face.FACE_LEFT);
 		}
-		if (needFace(currentBlock, x, y + dimension, z)) {
+		if (needFace(currentBlock, x, y + dimension, z, Face.FACE_UP)) {
 			faces.add(Face.FACE_UP);
 		}
-		if (needFace(currentBlock, x, y - dimension, z)) {
+		if (needFace(currentBlock, x, y - dimension, z, Face.FACE_DOWN)) {
 			faces.add(Face.FACE_DOWN);
 		}
-		if (needFace(currentBlock, x, y, z + dimension)) {
+		if (needFace(currentBlock, x, y, z + dimension, Face.FACE_BACK)) {
 			faces.add(Face.FACE_BACK);
 		}
-		if (needFace(currentBlock, x, y, z - dimension)) {
+		if (needFace(currentBlock, x, y, z - dimension, Face.FACE_FRONT)) {
 			faces.add(Face.FACE_FRONT);
 		}
 		return faces;
 	}
 
-	private boolean needFace(final int currentBlock, final float x, final float y, final float z) {
-		if (terrainChunk.getBoundingBox().contains(new Vector3f(x, y, z))) {
+	private boolean needFace(final int currentBlock, final float x, final float y, final float z, Face faceToCheck) {
+		if (terrainChunk.hasBlock(new Vector3f(x, y, z))) {
 			return needFace(currentBlock, terrainChunk.getBlock(new Vector3f(x, y, z)));
 		} else {
-			return false;
+			return needFace(currentBlock, loader.getAdHocBlock(new Vector3f(x, y, z), terrainChunk.getBoundingBox().getYExtent() / 2));
 		}
 	}
 
 	private boolean needFace(final int currentType, final int neighborType) {
-		return true;
+		return neighborType == 0;
+		// TODO: Make some lakes so we can get transparent water going.
 		// if (atlas.isTransparent(currentType)) {
 		// // current is translucent
 		// // we need a face if the neighbor block is not translucent

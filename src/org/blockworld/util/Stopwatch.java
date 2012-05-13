@@ -16,17 +16,35 @@ public class Stopwatch {
 	private final Logger log;
 	private long start;
 
+	private static boolean enabled = false;
+
+	public static void enable() {
+		Stopwatch.enabled = true;
+	}
+	
+	public static void disable() {
+		Stopwatch.enabled = false;
+	}
+	
 	public Stopwatch(Class<?> sourceClass) {
 		log = LoggerFactory.getLogger(sourceClass);
+		start = -1;
 	}
 
 	public final void start() {
-		start = System.currentTimeMillis();
+		if (enabled) {
+			start = System.currentTimeMillis();
+		}
 	}
 
 	public final void stop(String format) {
-		long stop = System.currentTimeMillis();
-		long duration = stop - start;
-		log.debug(String.format(format, duration));
+		if (enabled) {
+			if (start == -1l) {
+				throw new IllegalStateException("Must call start before calling stop");
+			}
+			long stop = System.currentTimeMillis();
+			long duration = stop - start;
+			log.debug(String.format(format, duration));
+		}
 	}
 }

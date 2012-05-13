@@ -9,8 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Matt Teeter
+ * An enum representing the faces of a cube.
  * 
+ * @author Matt Teeter
  */
 public enum Face {
 	FACE_NO("none", 0),

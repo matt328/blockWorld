@@ -153,7 +153,7 @@ public class ChunkSetNode extends Node {
 	}
 
 	private static final List<Vector3f> getSurroundingChunkPositions(Vector3f location) {
-		Vector3f gridLocation = new WorldGrid().worldCoordsToGridCoords(CHUNK_DIMENSION, location);
+		Vector3f gridLocation = WorldGrid.worldCoordsToGridCoords(CHUNK_DIMENSION, location);
 		List<Vector3f> surrounding = Lists.newArrayList();
 		for (Vector3f v : offsets) {
 			surrounding.add(v.add(gridLocation));

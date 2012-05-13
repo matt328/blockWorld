@@ -11,7 +11,6 @@ import java.util.logging.LogManager;
 import org.blockworld.asset.BlockTextureAtlas;
 import org.blockworld.asset.TextureAtlas;
 import org.blockworld.main.Main;
-import org.blockworld.util.Stopwatch;
 import org.blockworld.world.BasicChunk;
 import org.blockworld.world.loader.BlockworldBlockLoader;
 import org.blockworld.world.node.MeshChunkNode;
@@ -33,6 +32,8 @@ import com.jme3.system.AppSettings;
  */
 public class ChunkTester extends SimpleApplication {
 
+	private static final int CHUNK_RADIUS = 11;
+	
 	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 	static {
@@ -49,34 +50,18 @@ public class ChunkTester extends SimpleApplication {
 	 */
 	public static void main(String[] args) {
 		ChunkTester chunkTester = new ChunkTester();
-		chunkTester.setSettings(new AppSettings(true));
+		AppSettings appSettings = new AppSettings(true);
+		appSettings.setVSync(true);
+		chunkTester.setSettings(appSettings);
 		chunkTester.setShowSettings(false);
 		chunkTester.start();
 	}
 
 	@Override
 	public void simpleInitApp() {
-		BasicChunk chunk = new BasicChunk(new Vector3f(16, 256, 16), Vector3f.ZERO);
-		BasicChunk chunk2 = new BasicChunk(new Vector3f(16, 256, 16), new Vector3f(1.0f, 0.0f, 0.0f));
-		BasicChunk chunk3 = new BasicChunk(new Vector3f(16, 256, 16), new Vector3f(2.0f, 0.0f, 0.0f));
-		BasicChunk chunk4 = new BasicChunk(new Vector3f(16, 256, 16), new Vector3f(2.0f, 0.0f, 1.0f));
-		BlockworldBlockLoader loader = new BlockworldBlockLoader();
-
-		loader.fill(chunk);
-		loader.fill(chunk2);
-		loader.fill(chunk3);
-		loader.fill(chunk4);
 		
 		TextureAtlas atlas = new BlockTextureAtlas(this.assetManager);
-
-		MeshChunkNode node = new MeshChunkNode(chunk, atlas);
-		MeshChunkNode node2 = new MeshChunkNode(chunk2, atlas);
-		MeshChunkNode node3 = new MeshChunkNode(chunk3, atlas);
-		MeshChunkNode node4 = new MeshChunkNode(chunk4, atlas);
-		node.calculate();
-		node2.calculate();
-		node3.calculate();
-		node4.calculate();
+		BlockworldBlockLoader loader = new BlockworldBlockLoader();
 		
 		DirectionalLight sunDirectionalLight = new DirectionalLight();
 		sunDirectionalLight.setDirection(new Vector3f(-1, -1, -1).normalizeLocal());
@@ -85,11 +70,17 @@ public class ChunkTester extends SimpleApplication {
 		final AmbientLight ambientLight = new AmbientLight();
 		ambientLight.setColor(ColorRGBA.Yellow.mult(2));
 		rootNode.addLight(ambientLight);
+		
+		for(int x = -CHUNK_RADIUS; x < CHUNK_RADIUS; x++) {
+			for(int z = -CHUNK_RADIUS; z < CHUNK_RADIUS; z++) {
+				BasicChunk chunk = new BasicChunk(new Vector3f(16, 256, 16), new Vector3f(x, 0.0f, z));
+				loader.fill(chunk);
+				MeshChunkNode node = new MeshChunkNode(chunk, atlas, loader);
+				node.calculate();
+				rootNode.attachChild(node);
+			}
+		}
 
-		rootNode.attachChild(node);
-		rootNode.attachChild(node2);
-		rootNode.attachChild(node3);
-		rootNode.attachChild(node4);
 		getCamera().setLocation(new Vector3f(4.8676667f, 128.0f, -8.6687975f));
 		getCamera().setRotation(new Quaternion(0.27165264f, -0.2043419f, 0.05914175f, 0.93859017f));
 

@@ -7,8 +7,13 @@ package org.blockworld.world;
 
 import com.jme3.bounding.BoundingBox;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
 
 /**
+ * A {@link Chunk} is a section of the terrain composed of single blocks. A
+ * {@link Chunk} represents only the logical data composing a chunk that will be
+ * tesselated into a {@link Geometry} to be rendered by JME.
+ * 
  * @author Matt Teeter
  * 
  */
@@ -30,4 +35,9 @@ public interface Chunk {
 	boolean isDirty();
 
 	void setDirty(boolean dirty);
+
+	/**
+	 * @param position
+	 */
+	boolean hasBlock(Vector3f position);
 }
