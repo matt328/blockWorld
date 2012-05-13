@@ -5,6 +5,9 @@
  */
 package org.blockworld.util;
 
+import java.util.Collection;
+
+import com.google.common.collect.Lists;
 import com.jme3.math.Vector3f;
 
 /**
@@ -22,5 +25,28 @@ public class WorldGrid {
 		int d2 = d * 2;
 		int dMinusOne = d - 1;
 		return (int) ((i - d) / d2) + (i > dMinusOne ? 1 : 0);
+	}
+
+	public static Collection<Vector3f> getSurroundingChunkPositions(Vector3f location, int radius, Vector3f chunkDimensions) {
+		Collection<Vector3f> offsets = getOffsetsForRadius(radius);
+		Collection<Vector3f> positions = Lists.newArrayListWithExpectedSize(offsets.size());
+		for (Vector3f offset : offsets) {
+			float x = offset.x * chunkDimensions.x;
+			float y = offset.y;
+			float z = offset.z * chunkDimensions.z;
+			positions.add(new Vector3f(x, y, z));
+		}
+		return positions;
+	}
+
+	public static Collection<Vector3f> getOffsetsForRadius(final int radius) {
+		Collection<Vector3f> offsets = Lists.newArrayList();
+		offsets.add(Vector3f.ZERO);
+		for (int x = -radius; x < radius; x++) {
+			for (int z = -radius; z < radius; z++) {
+				offsets.add(new Vector3f(x, 0, z));
+			}
+		}
+		return offsets;
 	}
 }

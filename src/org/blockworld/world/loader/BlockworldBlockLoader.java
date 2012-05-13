@@ -14,7 +14,6 @@ import org.blockworld.math.functions.ScalePoint;
 import org.blockworld.math.functions.Selector;
 import org.blockworld.math.functions.Turbulence;
 import org.blockworld.util.Stopwatch;
-import org.blockworld.world.BasicChunk;
 import org.blockworld.world.Chunk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +68,7 @@ public class BlockworldBlockLoader {
 		return noise > 0.0f ? 1 : 0;
 	}
 
-	public void fill(BasicChunk chunk) {
+	public void fill(Chunk chunk) {
 		Stopwatch s = new Stopwatch(getClass());
 		s.start();
 		Vector3f chunkCenter = chunk.getBoundingBox().getCenter();

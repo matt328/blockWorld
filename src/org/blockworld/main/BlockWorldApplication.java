@@ -69,7 +69,6 @@ public class BlockWorldApplication extends SimpleApplication implements AnalogLi
 
 	@Override
 	public void simpleUpdate(final float tpf) {
-		// geom.rotate(0.0f, 0.2f * tpf, 0.0f);
 		super.simpleUpdate(tpf);
 	}
 
