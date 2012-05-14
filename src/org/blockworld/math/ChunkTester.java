@@ -8,10 +8,8 @@ package org.blockworld.math;
 import java.util.logging.Handler;
 import java.util.logging.LogManager;
 
-import org.blockworld.asset.BlockTextureAtlas;
-import org.blockworld.asset.TextureAtlas;
 import org.blockworld.main.Main;
-import org.blockworld.world.loader.BlockworldBlockLoader;
+import org.blockworld.state.paging.PagingStatsAppState;
 import org.blockworld.world.node.WorldController;
 import org.blockworld.world.node.WorldNode;
 import org.slf4j.Logger;
@@ -19,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.app.StatsAppState;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
@@ -53,6 +50,10 @@ public class ChunkTester extends SimpleApplication {
 		ChunkTester chunkTester = new ChunkTester();
 		AppSettings appSettings = new AppSettings(true);
 		appSettings.setVSync(true);
+//		appSettings.setVSync(false);
+//		appSettings.setWidth(1920);
+//		appSettings.setHeight(1080);
+//		appSettings.setFullscreen(true);
 		chunkTester.setSettings(appSettings);
 		chunkTester.setShowSettings(false);
 		chunkTester.start();
@@ -80,8 +81,9 @@ public class ChunkTester extends SimpleApplication {
 		// }
 		// }
 		
-		StatsAppState s = stateManager.getState(StatsAppState.class);
 		WorldNode w = new WorldNode(CHUNK_RADIUS, new Vector3f(16, 256, 16), assetManager);
+		PagingStatsAppState state = new PagingStatsAppState(guiNode, guiFont, w);
+		stateManager.attach(state);
 		WorldController controller = new WorldController(w, getCamera());
 		w.addControl(controller);
 		rootNode.attachChild(w);

@@ -15,6 +15,7 @@ import java.util.concurrent.ThreadFactory;
 
 import org.blockworld.asset.BlockTextureAtlas;
 import org.blockworld.asset.TextureAtlas;
+import org.blockworld.state.paging.PagingStats;
 import org.blockworld.util.WorldGrid;
 import org.blockworld.world.BasicChunk;
 import org.blockworld.world.Chunk;
@@ -32,6 +33,8 @@ import com.jme3.scene.Node;
  * 
  */
 public class WorldNode extends Node {
+	private static final int FRAME_COOL_OFF = 2;
+	private int frameCnt;
 	private static final Logger LOG = LoggerFactory.getLogger(WorldNode.class);
 	private final TextureAtlas atlas;
 	private final BlockworldBlockLoader loader;
@@ -39,15 +42,28 @@ public class WorldNode extends Node {
 	private final Vector3f chunkDimensions;
 	private final int chunkRadius;
 
-	private final ExecutorService threadPool;
+	private final ExecutorService fillingChunksThreadPool;
+	private final ExecutorService calculateChunksThreadPool;
 	private final BlockingQueue<AbstractChunkNode> chunksToFill;
 	private final BlockingQueue<AbstractChunkNode> chunksToCalculate;
 	private final BlockingQueue<AbstractChunkNode> chunksToAdd;
 
+	private Vector3f camLocation;
+	private final PagingStats stats;
+	
 	public WorldNode(final int chunkRadius, Vector3f chunkDimensions, AssetManager theAssetManager) {
+		frameCnt = 0;
 		this.chunkRadius = chunkRadius;
 		this.chunkDimensions = chunkDimensions;
-		threadPool = Executors.newFixedThreadPool(4, new ThreadFactory() {
+		fillingChunksThreadPool = Executors.newFixedThreadPool(2, new ThreadFactory() {
+			@Override
+			public Thread newThread(final Runnable r) {
+				final Thread th = new Thread(r);
+				th.setDaemon(true);
+				return th;
+			}
+		});
+		calculateChunksThreadPool = Executors.newFixedThreadPool(2, new ThreadFactory() {
 			@Override
 			public Thread newThread(final Runnable r) {
 				final Thread th = new Thread(r);
@@ -62,8 +78,10 @@ public class WorldNode extends Node {
 		loadedChunks = Maps.newHashMap();
 		loader = new BlockworldBlockLoader();
 
-		threadPool.execute(new FillChunkDispatcher());
-		threadPool.execute(new CalculateChunkDispatcher());
+		stats = new PagingStats(this);
+		
+		fillingChunksThreadPool.execute(new FillChunkDispatcher());
+		calculateChunksThreadPool.execute(new CalculateChunkDispatcher());
 	}
 
 	private void fillChunk(AbstractChunkNode node, BlockworldBlockLoader loader, BlockingQueue<AbstractChunkNode> resultQueue) {
@@ -73,13 +91,18 @@ public class WorldNode extends Node {
 	}
 
 	public void update(Vector3f location, Vector3f direction) {
-		AbstractChunkNode node = chunksToAdd.poll();
-		if (node != null) {
-			attachChild(node);
-		}
-		Collection<Vector3f> positions = WorldGrid.getSurroundingChunkPositions(location, chunkRadius, chunkDimensions);
-		for (Vector3f v : positions) {
-			createNewChunkNode(v);
+		camLocation = location;
+		frameCnt++;
+		if(frameCnt >= FRAME_COOL_OFF) {
+			AbstractChunkNode node = chunksToAdd.poll();
+			if (node != null) {
+				attachChild(node);
+			}
+			Collection<Vector3f> positions = WorldGrid.getSurroundingChunkPositions(location, chunkRadius, chunkDimensions);
+			for (Vector3f v : positions) {
+				createNewChunkNode(v);
+			}
+			frameCnt = 0;
 		}
 	}
 
@@ -99,7 +122,7 @@ public class WorldNode extends Node {
 			while (true) {
 				try {
 					AbstractChunkNode node = chunksToFill.take();
-					threadPool.execute(new FillChunkThread(node));
+					fillingChunksThreadPool.execute(new FillChunkThread(node));
 				} catch (InterruptedException iex) {
 					LOG.debug("Fill Chunk Dispatcher shutting down");
 					break;
@@ -128,7 +151,7 @@ public class WorldNode extends Node {
 			while (true) {
 				try {
 					AbstractChunkNode node = chunksToCalculate.take();
-					threadPool.execute(new CalculateChunkThread(node));
+					calculateChunksThreadPool.execute(new CalculateChunkThread(node));
 				} catch (InterruptedException iex) {
 					LOG.debug("Calculate Chunk Dispatcher Shutdown");
 					break;
@@ -146,9 +169,32 @@ public class WorldNode extends Node {
 
 		@Override
 		public void run() {
-			LOG.debug("Calculating Chunk: " + node.toString());
 			node.calculate();
 			chunksToAdd.add(node);
 		}
+	}
+	
+	public int getChunksToFillSize() {
+		return chunksToFill.size();
+	}
+	
+	public int getChunksToCalculateSize() {
+		return chunksToCalculate.size();
+	}
+	
+	public int getChunksToAddSize() {
+		return chunksToAdd.size();
+	}
+	
+	public Vector3f getLocation() {
+		return camLocation;
+	}
+	
+	public Vector3f getGridLocation() {
+		return WorldGrid.worldCoordsToGridCoords((int) chunkDimensions.x, camLocation);
+	}
+	
+	public PagingStats getStats() {
+		return stats;
 	}
 }

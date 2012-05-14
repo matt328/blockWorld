@@ -21,6 +21,7 @@ public class BasicChunk implements Chunk {
 	private final BoundingBox boundingBox;
 	private final Vector3f dimensions;
 	private boolean dirty;
+	private final String name;
 
 	private final int offsetX;
 	private final int offsetY;
@@ -37,9 +38,10 @@ public class BasicChunk implements Chunk {
 	 */
 	public BasicChunk(Vector3f dimensions, Vector3f position) {
 		this.dimensions = dimensions;
-		float centerX = position.x * (dimensions.x) + 1;
+		this.name = BasicChunk.createChunkName(position);
+		float centerX = position.x;
 		float centerY = (dimensions.y / 2);
-		float centerZ = position.z * (dimensions.z) + 1;
+		float centerZ = position.z;
 
 		boundingBox = new BoundingBox(new Vector3f(centerX, centerY, centerZ), dimensions.x / 2, dimensions.y / 2, dimensions.z / 2);
 		data = new int[(int) dimensions.x][(int) dimensions.y][(int) dimensions.z];
@@ -157,7 +159,7 @@ public class BasicChunk implements Chunk {
 		Preconditions.checkArgument(localPosition.x >= 0, "Position X Value (%s) produces translated value less than zero", globalPosition.x);
 		Preconditions.checkArgument(localPosition.y >= 0, "Position Y Value (%s) produces translated value less than zero", globalPosition.y);
 		Preconditions.checkArgument(localPosition.z >= 0, "Position Z Value (%s) produces translated value less than zero", globalPosition.z);
-	
+
 		Preconditions.checkArgument(localPosition.x < dimensions.x, "Position X Value (%s) would cause access outside of bounds (Max X: %s)", localPosition.x, dimensions.x - 1);
 		Preconditions.checkArgument(localPosition.y < dimensions.y, "Position Y Value (%s) would cause access outside of bounds (Max Y: %s)", localPosition.y, dimensions.y - 1);
 		Preconditions.checkArgument(localPosition.z < dimensions.z, "Position Z Value (%s) would cause access outside of bounds (Max Z: %s)", localPosition.z, dimensions.z - 1);
@@ -166,5 +168,10 @@ public class BasicChunk implements Chunk {
 	public static String createChunkName(Vector3f position) {
 		return "Chunk " + position.toString();
 	}
-	
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
 }

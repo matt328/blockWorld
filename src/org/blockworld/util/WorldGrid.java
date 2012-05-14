@@ -17,26 +17,38 @@ import com.jme3.math.Vector3f;
 public class WorldGrid {
 
 	public static Vector3f worldCoordsToGridCoords(int chunkDimension, Vector3f location) {
-		Vector3f translated = new Vector3f(translate(location.x, chunkDimension), translate(location.y, chunkDimension), translate(location.z, chunkDimension));
-		return translated.mult(chunkDimension * 2);
+		Vector3f translated = new Vector3f(translate(location.x, chunkDimension), location.y, translate(location.z, chunkDimension));
+		return translated;
 	}
 
-	private static float translate(float i, int d) {
-		int d2 = d * 2;
-		int dMinusOne = d - 1;
-		return (int) ((i - d) / d2) + (i > dMinusOne ? 1 : 0);
+	public static float translate(float i, int d) {
+		int halfd = d / 2;
+		float hb0 = (int) (i / halfd);
+		if (hb0 % 2 == 0) {
+			hb0 *= halfd;
+		} else {
+			hb0 += hb0 < 0 ? -1 : 1;
+			hb0 *= halfd;
+		}
+		return hb0;
 	}
 
 	public static Collection<Vector3f> getSurroundingChunkPositions(Vector3f location, int radius, Vector3f chunkDimensions) {
-		Vector3f translated = new Vector3f(translate(location.x, (int) chunkDimensions.x), location.y, translate(location.z, (int) chunkDimensions.z));
-		Collection<Vector3f> offsets = getOffsetsForRadius(radius);
-		Collection<Vector3f> positions = Lists.newArrayListWithExpectedSize(offsets.size());
-		for (Vector3f offset : offsets) {
-			float x = offset.x + translated.x;
-			float y = offset.y;
-			float z = offset.z + translated.z;
-			positions.add(new Vector3f(x, y, z));
+		Vector3f centerChunkPosition = new Vector3f(translate(location.x, (int) chunkDimensions.x), location.y, translate(location.z, (int) chunkDimensions.z));
+
+		Collection<Vector3f> positions = Lists.newArrayList();
+
+		int xStart = (int) (centerChunkPosition.x - (chunkDimensions.x * radius));
+		int zStart = (int) (centerChunkPosition.z - (chunkDimensions.z * radius));
+		int xEnd = (int) (centerChunkPosition.x + (chunkDimensions.x * radius));
+		int zEnd = (int) (centerChunkPosition.z + (chunkDimensions.z * radius));
+
+		for (int x = xStart; x <= xEnd; x += chunkDimensions.x) {
+			for (int z = zStart; z <= zEnd; z += chunkDimensions.z) {
+				positions.add(new Vector3f(x, 0, z));
+			}
 		}
+
 		return positions;
 	}
 

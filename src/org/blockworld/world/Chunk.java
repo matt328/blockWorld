@@ -18,6 +18,8 @@ import com.jme3.scene.Geometry;
  * 
  */
 public interface Chunk {
+	String getName();
+	
 	boolean isEmpty(Vector3f position);
 
 	void setBlock(int data, Vector3f position);
