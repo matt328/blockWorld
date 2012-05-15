@@ -1,0 +1,18 @@
+#jME3 AppSettings
+#Sun Apr 22 20:27:36 EDT 2012
+Width(int)=800
+BitsPerPixel(int)=24
+StencilBits(int)=0
+DepthBits(int)=24
+Renderer(string)=LWJGL-OpenGL2
+VSync(bool)=true
+DisableJoysticks(bool)=true
+Frequency(int)=-1
+AudioRenderer(string)=LWJGL
+Height(int)=600
+Fullscreen(bool)=false
+UseInput(bool)=true
+Title(string)=jMonkey Engine 3.0
+FrameRate(int)=-1
+Samples(int)=0
+SettingsDialogImage(string)=/com/jme3/app/Monkey.png
