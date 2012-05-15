@@ -33,7 +33,7 @@ import com.jme3.scene.Node;
  * 
  */
 public class WorldNode extends Node {
-	private static final int FRAME_COOL_OFF = 2;
+	private static final int FRAME_COOL_OFF = 0;
 	private int frameCnt;
 	private static final Logger LOG = LoggerFactory.getLogger(WorldNode.class);
 	private final TextureAtlas atlas;

@@ -8,7 +8,6 @@ package org.blockworld.main;
 import java.util.logging.Handler;
 import java.util.logging.LogManager;
 
-import org.blockworld.state.paging.PagingStatsAppState;
 import org.blockworld.world.node.WorldController;
 import org.blockworld.world.node.WorldNode;
 import org.slf4j.Logger;
@@ -46,6 +45,8 @@ public class BlockworldApplication extends SimpleApplication {
 		BlockworldApplication chunkTester = new BlockworldApplication();
 		AppSettings appSettings = new AppSettings(true);
 		appSettings.setVSync(true);
+		appSettings.setWidth(1024);
+		appSettings.setHeight(768);
 		chunkTester.setSettings(appSettings);
 		chunkTester.setShowSettings(false);
 		chunkTester.start();
@@ -62,14 +63,15 @@ public class BlockworldApplication extends SimpleApplication {
 		rootNode.addLight(ambientLight);
 
 		WorldNode w = new WorldNode(CHUNK_RADIUS, new Vector3f(16, 256, 16), assetManager);
-		PagingStatsAppState state = new PagingStatsAppState(guiNode, guiFont, w);
-		stateManager.attach(state);
+		// PagingStatsAppState state = new PagingStatsAppState(guiNode, guiFont,
+		// w);
+		// stateManager.attach(state);
 		WorldController controller = new WorldController(w, getCamera());
 		w.addControl(controller);
 		rootNode.attachChild(w);
 
 		getCamera().setLocation(new Vector3f(4.8676667f, 128.0f, -8.6687975f));
-		getCamera().setRotation(new Quaternion(0.27165264f, -0.2043419f, 0.05914175f, 0.93859017f));
+		getCamera().setRotation(new Quaternion(0.107846506f, -0.69533557f, 0.10674867f, 0.7024829f));
 		flyCam.setMoveSpeed(5.0f);
 
 	}

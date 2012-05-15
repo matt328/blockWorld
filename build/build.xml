@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="BlockWorld" default="jar" basedir="..">
 
-	<property file="${basedir}/build/build.properties" />
+	<available file="${basedir}/build/${user.name}.properties" property="isFileAvail" />
+	<fail unless="isFileAvail" message="File ${basedir}/build/${user.name}.properties does not exist.  Create this file, setting the properties found in ${basedir}/build/template.properties and substituting values specific to your environment." />
+
+	<property file="${basedir}/build/${user.name}.properties" />
+
 	<property name="build.dir" value="${basedir}/dist" />
 	<property name="src.dir" value="${basedir}/src" />
 	<property name="asset.dir" value="${basedir}/assets" />
-	<property name="jMonkey.dir" value="${basedir}/jMonkey" />
 	<property name="jMonkey.lib.dir" value="${jMonkey.dir}/lib" />
 
 	<property name="dist.dir" value="${basedir}/dist" />
@@ -16,16 +19,15 @@
 
 	<property name="assets.jar.name" value="assets.jar" />
 
-	<property name="main.class" value="org.blockworld.main.MyGame" />
+	<property name="main.class" value="org.blockworld.main.BlockworldApplication" />
 
 	<property name="main.jar.name" value="${ant.project.name}.jar" />
 	<property name="dist.jar" value="${dist.dir}/${main.jar.name}" />
 
-	<property name="launch4j.home.dir" value="E:/dev/java/launch4j" />
 	<property name="launch4j.lib.dir" value="${launch4j.home.dir}/lib" />
 
 	<property name="lib.dir" value="${basedir}/lib" />
-	
+
 	<property name="src.infoplist" value="${basedir}/etc/macosx/Info.plist" />
 	<property name="src.osx-stub" value="${basedir}/etc/macosx/osx-stub" />
 	<property name="src.osx-icns" value="${basedir}/etc/macosx/osx-icon.icns" />
@@ -84,6 +86,11 @@
 				<include name="**/*.jar" />
 			</fileset>
 		</copy>
+		<copy todir="${dist.lib.dir}" flatten="true">
+			<fileset dir="${lib.dir}" id="blockworld.libs">
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
 	</target>
 
 	<target name="jar" depends="compile, copy-libs, jar-assets">
@@ -124,6 +131,7 @@ java -jar ${main.jar.name}
 		</launch4j>
 		<zip destfile="${dist.dir}/${ant.project.name}-Windows.zip">
 			<zipfileset file="${dist.dir}/${ant.project.name}.exe" prefix="" />
+			<zipfileset file="${dist.dir}/${main.jar.name}" prefix="" />
 			<zipfileset dir="${dist.dir}/lib" prefix="lib/" />
 		</zip>
 		<delete file="${dist.dir}/${ant.project.name}.exe" />
