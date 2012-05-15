@@ -3,7 +3,7 @@
  * Author: Matt Teeter
  * Apr 29, 2012
  */
-package org.blockworld.math;
+package org.blockworld.main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -17,6 +17,7 @@ import java.beans.PropertyChangeListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.blockworld.math.Interpolation;
 import org.blockworld.math.Noise.NoiseType;
 import org.blockworld.math.functions.Constant;
 import org.blockworld.math.functions.Function;

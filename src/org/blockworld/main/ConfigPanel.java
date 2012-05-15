@@ -3,7 +3,7 @@
  * Author: Matt Teeter
  * May 4, 2012
  */
-package org.blockworld.math;
+package org.blockworld.main;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

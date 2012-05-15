@@ -51,6 +51,9 @@ public class WorldNode extends Node {
 	private Vector3f camLocation;
 	private final PagingStats stats;
 	
+	// TODO: Could optimize further by combining these two thread pools, and combining
+	// filling chunks and calculating chunks into one task.
+	
 	public WorldNode(final int chunkRadius, Vector3f chunkDimensions, AssetManager theAssetManager) {
 		frameCnt = 0;
 		this.chunkRadius = chunkRadius;

@@ -3,12 +3,11 @@
  * Author: Matt Teeter
  * May 6, 2012
  */
-package org.blockworld.math;
+package org.blockworld.main;
 
 import java.util.logging.Handler;
 import java.util.logging.LogManager;
 
-import org.blockworld.main.Main;
 import org.blockworld.state.paging.PagingStatsAppState;
 import org.blockworld.world.node.WorldController;
 import org.blockworld.world.node.WorldNode;
@@ -28,12 +27,12 @@ import com.jme3.system.AppSettings;
  * @author Matt Teeter
  * 
  */
-public class ChunkTester extends SimpleApplication {
+public class BlockworldApplication extends SimpleApplication {
 
 	private static final int CHUNK_RADIUS = 10;
-	
+
 	@SuppressWarnings("unused")
-	private static final Logger LOG = LoggerFactory.getLogger(Main.class);
+	private static final Logger LOG = LoggerFactory.getLogger(BlockworldApplication.class);
 	static {
 		final java.util.logging.Logger rootLogger = LogManager.getLogManager().getLogger("");
 		final Handler[] handlers = rootLogger.getHandlers();
@@ -43,17 +42,10 @@ public class ChunkTester extends SimpleApplication {
 		SLF4JBridgeHandler.install();
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
-		ChunkTester chunkTester = new ChunkTester();
+		BlockworldApplication chunkTester = new BlockworldApplication();
 		AppSettings appSettings = new AppSettings(true);
 		appSettings.setVSync(true);
-//		appSettings.setVSync(false);
-//		appSettings.setWidth(1920);
-//		appSettings.setHeight(1080);
-//		appSettings.setFullscreen(true);
 		chunkTester.setSettings(appSettings);
 		chunkTester.setShowSettings(false);
 		chunkTester.start();
@@ -68,26 +60,14 @@ public class ChunkTester extends SimpleApplication {
 		final AmbientLight ambientLight = new AmbientLight();
 		ambientLight.setColor(ColorRGBA.Yellow.mult(2));
 		rootNode.addLight(ambientLight);
-		
 
-		// for(int x = -CHUNK_RADIUS; x < CHUNK_RADIUS; x++) {
-		// for(int z = -CHUNK_RADIUS; z < CHUNK_RADIUS; z++) {
-		// BasicChunk chunk = new BasicChunk(new Vector3f(16, 256, 16), new
-		// Vector3f(x, 0.0f, z));
-		// loader.fill(chunk);
-		// MeshChunkNode node = new MeshChunkNode(chunk, atlas, loader);
-		// node.calculate();
-		// rootNode.attachChild(node);
-		// }
-		// }
-		
 		WorldNode w = new WorldNode(CHUNK_RADIUS, new Vector3f(16, 256, 16), assetManager);
 		PagingStatsAppState state = new PagingStatsAppState(guiNode, guiFont, w);
 		stateManager.attach(state);
 		WorldController controller = new WorldController(w, getCamera());
 		w.addControl(controller);
 		rootNode.attachChild(w);
-		
+
 		getCamera().setLocation(new Vector3f(4.8676667f, 128.0f, -8.6687975f));
 		getCamera().setRotation(new Quaternion(0.27165264f, -0.2043419f, 0.05914175f, 0.93859017f));
 		flyCam.setMoveSpeed(5.0f);
