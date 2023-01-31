@@ -9,4 +9,6 @@
  */
 
 rootProject.name = 'blockworld'
-include('app')
+include('game')
+include('editor')
+include('shared')

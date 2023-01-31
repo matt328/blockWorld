@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<functions>
+  <function id="ConstOne" type="org.blockworldshared.math.functions.Constant">
+    <floatComponent name="constant" value="0.1" />
+  </function>
+  <function id="ZoneNoise" type="org.blockworldshared.math.functions.PerlinNoise">
+    <stringComponent name="noiseType" value="Perlin" />
+    <floatComponent name="frequency" value="0.1" />
+    <intComponent name="octave" value="6" />
+    <stringComponent name="seed" value="Matt" />
+  </function>
+  <function id="ScaleZones" type="org.blockworldshared.math.functions.ScalePoint">
+    <functionComponent name="source" functionRef="ZoneNoise" />
+    <floatComponent name="scale" value="0.05" />
+  </function>
+  <function id="ZoneSelector" type="org.blockworldshared.math.functions.Selector">
+    <functionComponent name="mainSource" functionRef="ZoneNoise" />
+    <functionComponent name="lowSource" functionRef="ZoneNoise" />
+    <functionComponent name="highSource" functionRef="ConstOne" />
+    <floatComponent name="threshold" value="0.0" />
+    <floatComponent name="edgeFalloff" value="0.2" />
+  </function>
+</functions>
