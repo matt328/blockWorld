@@ -2,13 +2,20 @@
 Minecraft-style Terrain Generator/Renderer in Java
 
 Clone the repository
+
+Run the game:
 ```bash
-cd blockworld
-./gradlew run
+./gradlew :game:run
+```
+
+Run the editor
+```bash
+./gradlew :editor:run
 ```
 
 - Uses Perlin noise function to generate landscape
 - Pages in new chunks as the player navigates around the world
+- Has a somewhat incomplete 'editor' that attempts to visualize the world at given coordinates, but was written 12 years ago using Swing for graphics and it shows.
 
 TODO:
 - more variation on landscape via higher order functions (biomes)
