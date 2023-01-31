@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty xmlns="http://nifty-gui.sourceforge.net/nifty.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty.xsd http://nifty-gui.sourceforge.net/nifty.xsd">
+  <screen id="hud" controller="org.blockworld.screen.HudScreenController">
+    <layer id="background" backgroundColor="#0000FF00" childLayout="center">
+      <panel id="panel_top" height="25%" width="60%" align="right" childLayout="center" backgroundColor="#fff8" valign="bottom" >
+        <image id="testImage" filename="Textures/Gui/miniMap_a.png" />
+      </panel>
+    </layer>
+    <layer id="foreground" backgroundColor="#0000" childLayout="horizontal">
+    </layer>
+  </screen>
+</nifty>

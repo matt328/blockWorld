@@ -1,5 +1,7 @@
-/dist
-/lwjgl.dll
-/OpenAL32.dll
-/output.log
-/blockworld.settings
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build
+bin
+*.dylib
