@@ -9,10 +9,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.blockworldshared.math.functions.loader.Functions.Function;
 import org.blockworldshared.math.functions.loader.Functions.Function.FloatComponent;
@@ -21,6 +17,10 @@ import org.blockworldshared.math.functions.loader.Functions.Function.IntComponen
 import org.blockworldshared.math.functions.loader.Functions.Function.StringComponent;
 
 import com.google.common.collect.Maps;
+
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
 
 /**
  * @author Matt Teeter

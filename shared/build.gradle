@@ -17,6 +17,8 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'commons-beanutils:commons-beanutils:1.9.4'
     implementation 'net.sf.trove4j:trove4j:3.0.3'
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.0'
+    implementation 'com.sun.xml.bind:jaxb-impl:4.0.1'
 }
 
 testing {

@@ -5,23 +5,25 @@
 // Generated on: 2012.05.22 at 09:53:36 PM EDT 
 //
 
-
 package org.blockworldshared.math.functions.loader;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -90,7 +92,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "function"
+        "function"
 })
 @XmlRootElement(name = "functions")
 public class Functions {
@@ -109,8 +111,9 @@ public class Functions {
      * 
      * <p>
      * For example, to add a new item, do as follows:
+     * 
      * <pre>
-     *    getFunction().add(newItem);
+     * getFunction().add(newItem);
      * </pre>
      * 
      * 
@@ -127,11 +130,13 @@ public class Functions {
         return this.function;
     }
 
-
     /**
-     * <p>Java class for anonymous complex type.
+     * <p>
+     * Java class for anonymous complex type.
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
+     * <p>
+     * The following schema fragment specifies the expected content contained within
+     * this class.
      * 
      * <pre>
      * &lt;complexType>
@@ -190,10 +195,10 @@ public class Functions {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
-        "floatComponent",
-        "stringComponent",
-        "intComponent",
-        "functionComponent"
+            "floatComponent",
+            "stringComponent",
+            "intComponent",
+            "functionComponent"
     })
     public static class Function {
 
@@ -217,12 +222,14 @@ public class Functions {
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the floatComponent property.
+         * This is why there is not a <CODE>set</CODE> method for the floatComponent
+         * property.
          * 
          * <p>
          * For example, to add a new item, do as follows:
+         * 
          * <pre>
-         *    getFloatComponent().add(newItem);
+         * getFloatComponent().add(newItem);
          * </pre>
          * 
          * 
@@ -246,12 +253,14 @@ public class Functions {
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the stringComponent property.
+         * This is why there is not a <CODE>set</CODE> method for the stringComponent
+         * property.
          * 
          * <p>
          * For example, to add a new item, do as follows:
+         * 
          * <pre>
-         *    getStringComponent().add(newItem);
+         * getStringComponent().add(newItem);
          * </pre>
          * 
          * 
@@ -275,12 +284,14 @@ public class Functions {
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the intComponent property.
+         * This is why there is not a <CODE>set</CODE> method for the intComponent
+         * property.
          * 
          * <p>
          * For example, to add a new item, do as follows:
+         * 
          * <pre>
-         *    getIntComponent().add(newItem);
+         * getIntComponent().add(newItem);
          * </pre>
          * 
          * 
@@ -304,12 +315,14 @@ public class Functions {
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the functionComponent property.
+         * This is why there is not a <CODE>set</CODE> method for the functionComponent
+         * property.
          * 
          * <p>
          * For example, to add a new item, do as follows:
+         * 
          * <pre>
-         *    getFunctionComponent().add(newItem);
+         * getFunctionComponent().add(newItem);
          * </pre>
          * 
          * 
@@ -330,9 +343,9 @@ public class Functions {
          * Gets the value of the id property.
          * 
          * @return
-         *     possible object is
-         *     {@link String }
-         *     
+         *         possible object is
+         *         {@link String }
+         * 
          */
         public String getId() {
             return id;
@@ -342,9 +355,9 @@ public class Functions {
          * Sets the value of the id property.
          * 
          * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
+         *              allowed object is
+         *              {@link String }
+         * 
          */
         public void setId(String value) {
             this.id = value;
@@ -354,9 +367,9 @@ public class Functions {
          * Gets the value of the type property.
          * 
          * @return
-         *     possible object is
-         *     {@link String }
-         *     
+         *         possible object is
+         *         {@link String }
+         * 
          */
         public String getType() {
             return type;
@@ -366,19 +379,21 @@ public class Functions {
          * Sets the value of the type property.
          * 
          * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
+         *              allowed object is
+         *              {@link String }
+         * 
          */
         public void setType(String value) {
             this.type = value;
         }
 
-
         /**
-         * <p>Java class for anonymous complex type.
+         * <p>
+         * Java class for anonymous complex type.
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.
+         * <p>
+         * The following schema fragment specifies the expected content contained within
+         * this class.
          * 
          * <pre>
          * &lt;complexType>
@@ -406,9 +421,9 @@ public class Functions {
              * Gets the value of the name property.
              * 
              * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             *         possible object is
+             *         {@link String }
+             * 
              */
             public String getName() {
                 return name;
@@ -418,9 +433,9 @@ public class Functions {
              * Sets the value of the name property.
              * 
              * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             *              allowed object is
+             *              {@link String }
+             * 
              */
             public void setName(String value) {
                 this.name = value;
@@ -430,9 +445,9 @@ public class Functions {
              * Gets the value of the value property.
              * 
              * @return
-             *     possible object is
-             *     {@link Float }
-             *     
+             *         possible object is
+             *         {@link Float }
+             * 
              */
             public Float getValue() {
                 return value;
@@ -442,9 +457,9 @@ public class Functions {
              * Sets the value of the value property.
              * 
              * @param value
-             *     allowed object is
-             *     {@link Float }
-             *     
+             *              allowed object is
+             *              {@link Float }
+             * 
              */
             public void setValue(Float value) {
                 this.value = value;
@@ -452,11 +467,13 @@ public class Functions {
 
         }
 
-
         /**
-         * <p>Java class for anonymous complex type.
+         * <p>
+         * Java class for anonymous complex type.
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.
+         * <p>
+         * The following schema fragment specifies the expected content contained within
+         * this class.
          * 
          * <pre>
          * &lt;complexType>
@@ -484,9 +501,9 @@ public class Functions {
              * Gets the value of the name property.
              * 
              * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             *         possible object is
+             *         {@link String }
+             * 
              */
             public String getName() {
                 return name;
@@ -496,9 +513,9 @@ public class Functions {
              * Sets the value of the name property.
              * 
              * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             *              allowed object is
+             *              {@link String }
+             * 
              */
             public void setName(String value) {
                 this.name = value;
@@ -508,9 +525,9 @@ public class Functions {
              * Gets the value of the functionRef property.
              * 
              * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             *         possible object is
+             *         {@link String }
+             * 
              */
             public String getFunctionRef() {
                 return functionRef;
@@ -520,9 +537,9 @@ public class Functions {
              * Sets the value of the functionRef property.
              * 
              * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             *              allowed object is
+             *              {@link String }
+             * 
              */
             public void setFunctionRef(String value) {
                 this.functionRef = value;
@@ -530,11 +547,13 @@ public class Functions {
 
         }
 
-
         /**
-         * <p>Java class for anonymous complex type.
+         * <p>
+         * Java class for anonymous complex type.
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.
+         * <p>
+         * The following schema fragment specifies the expected content contained within
+         * this class.
          * 
          * <pre>
          * &lt;complexType>
@@ -562,9 +581,9 @@ public class Functions {
              * Gets the value of the name property.
              * 
              * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             *         possible object is
+             *         {@link String }
+             * 
              */
             public String getName() {
                 return name;
@@ -574,9 +593,9 @@ public class Functions {
              * Sets the value of the name property.
              * 
              * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             *              allowed object is
+             *              {@link String }
+             * 
              */
             public void setName(String value) {
                 this.name = value;
@@ -586,9 +605,9 @@ public class Functions {
              * Gets the value of the value property.
              * 
              * @return
-             *     possible object is
-             *     {@link Integer }
-             *     
+             *         possible object is
+             *         {@link Integer }
+             * 
              */
             public Integer getValue() {
                 return value;
@@ -598,9 +617,9 @@ public class Functions {
              * Sets the value of the value property.
              * 
              * @param value
-             *     allowed object is
-             *     {@link Integer }
-             *     
+             *              allowed object is
+             *              {@link Integer }
+             * 
              */
             public void setValue(Integer value) {
                 this.value = value;
@@ -608,11 +627,13 @@ public class Functions {
 
         }
 
-
         /**
-         * <p>Java class for anonymous complex type.
+         * <p>
+         * Java class for anonymous complex type.
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.
+         * <p>
+         * The following schema fragment specifies the expected content contained within
+         * this class.
          * 
          * <pre>
          * &lt;complexType>
@@ -640,9 +661,9 @@ public class Functions {
              * Gets the value of the name property.
              * 
              * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             *         possible object is
+             *         {@link String }
+             * 
              */
             public String getName() {
                 return name;
@@ -652,9 +673,9 @@ public class Functions {
              * Sets the value of the name property.
              * 
              * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             *              allowed object is
+             *              {@link String }
+             * 
              */
             public void setName(String value) {
                 this.name = value;
@@ -664,9 +685,9 @@ public class Functions {
              * Gets the value of the value property.
              * 
              * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             *         possible object is
+             *         {@link String }
+             * 
              */
             public String getValue() {
                 return value;
@@ -676,9 +697,9 @@ public class Functions {
              * Sets the value of the value property.
              * 
              * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             *              allowed object is
+             *              {@link String }
+             * 
              */
             public void setValue(String value) {
                 this.value = value;

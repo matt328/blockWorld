@@ -1,5 +1,12 @@
 plugins {
     id 'application'
+    id 'eclipse'
+}
+
+eclipse {
+    classpath {
+       downloadSources=true
+    }
 }
 
 repositories {

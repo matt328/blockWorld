@@ -12,6 +12,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.blockworld.util.Stopwatch;
 import org.blockworld.world.BasicChunk;
 import org.blockworld.world.Chunk;
+import org.blockworldshared.math.functions.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,119 +32,124 @@ import com.jme3.scene.Spatial;
  * 
  */
 public abstract class AbstractChunkNode extends Node implements ChunkNode {
-	@SuppressWarnings("unused")
-	private static final Logger LOG = LoggerFactory.getLogger(AbstractChunkNode.class);
+    @SuppressWarnings("unused")
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractChunkNode.class);
 
-	enum ChunkState {
-		NEW, CALCULATED, UP2DATE, DIRTY
-	}
+    enum ChunkState {
+        NEW, CALCULATED, UP2DATE, DIRTY
+    }
 
-	protected final Chunk terrainChunk;
-	protected final List<Spatial> geometries;
-	protected ChunkState state = ChunkState.NEW;
-	protected final Lock updateLock;
+    protected final Chunk terrainChunk;
+    protected final List<Spatial> geometries;
+    protected ChunkState state = ChunkState.NEW;
+    protected final Lock updateLock;
 
-	protected abstract List<Geometry> createGeometries();
+    protected abstract List<Geometry> createGeometries();
 
-	/**
-	 * Create a {@link ChunkNode}, supplying the {@link Chunk} that will serve
-	 * as its geometry source.
-	 * 
-	 * @param terrainChunk
-	 *            - a BlockChunk that this {@link ChunkNode} will 'wrap' and
-	 *            create {@link Geometry} for in order to be rendered by JME.
-	 */
-	public AbstractChunkNode(final Chunk terrainChunk) {
-		super(BasicChunk.createChunkName(terrainChunk.getBoundingBox().getCenter()));
-		this.terrainChunk = terrainChunk;
-		updateLock = new ReentrantLock();
-		geometries = Lists.newArrayList();
-	}
+    protected final Function theFunction;
 
-	public boolean hasBlock(Vector3f position) {
-		return terrainChunk.hasBlock(position);
-	}
+    /**
+     * Create a {@link ChunkNode}, supplying the {@link Chunk} that will serve
+     * as its geometry source.
+     * 
+     * @param terrainChunk
+     *                     - a BlockChunk that this {@link ChunkNode} will 'wrap'
+     *                     and
+     *                     create {@link Geometry} for in order to be rendered by
+     *                     JME.
+     */
+    public AbstractChunkNode(final Chunk terrainChunk, final Function theFunction) {
+        super(BasicChunk.createChunkName(terrainChunk.getBoundingBox().getCenter()));
+        this.terrainChunk = terrainChunk;
+        this.theFunction = theFunction;
+        updateLock = new ReentrantLock();
+        geometries = Lists.newArrayList();
+    }
 
-	public Chunk getTerrainChunk() {
-		return terrainChunk;
-	}
+    public boolean hasBlock(Vector3f position) {
+        return terrainChunk.hasBlock(position);
+    }
 
-	@Override
-	public int getBlock(Vector3f location) {
-		return terrainChunk.getBlock(location);
-	}
+    public Chunk getTerrainChunk() {
+        return terrainChunk;
+    }
 
-	public ChunkState getState() {
-		return state;
-	}
+    @Override
+    public int getBlock(Vector3f location) {
+        return terrainChunk.getBlock(location);
+    }
 
-	/**
-	 * Calculates the {@link ChunkNode}'s {@link Geometry}. Performs basic
-	 * checks to see if the Chunk is dirty, and if not, defers geometry creation
-	 * to the abstract method, createGeometries().
-	 * 
-	 * This function can be time intensive, depending on the tesselation
-	 * algorithm supplied, as such care should be taken to ensure it does not
-	 * execute on the graphics thread, but rather on a background thread. This
-	 * method will prepare the geometry list, to be added to the scene by the
-	 * update() method. Care should also be taken to ensure the update method IS
-	 * called on the graphics update thread as it causes updates to be made to
-	 * the Scene.
-	 */
-	@Override
-	public boolean calculate() {
-		Stopwatch st = new Stopwatch(getClass());
-		st.start();
-		try {
-			updateLock.lock();
-			try {
-				if (!terrainChunk.isDirty()) {
-					state = ChunkState.CALCULATED;
-					return false;
-				}
-				geometries.clear();
-				geometries.addAll(createGeometries());
-				for (Spatial s : geometries) {
-					attachChild(s);
-				}
-				terrainChunk.setDirty(false);
-				state = ChunkState.CALCULATED;
-			} finally {
-				updateLock.unlock();
-			}
-		} finally {
-			st.stop("Calculated Chunk in %dms");
-		}
-		return true;
-	}
+    public ChunkState getState() {
+        return state;
+    }
 
-	@Override
-	public void removeBlock(Vector3f location) {
-		state = ChunkState.DIRTY;
-		terrainChunk.removeBlock(location);
-		calculate();
-	}
+    /**
+     * Calculates the {@link ChunkNode}'s {@link Geometry}. Performs basic
+     * checks to see if the Chunk is dirty, and if not, defers geometry creation
+     * to the abstract method, createGeometries().
+     * 
+     * This function can be time intensive, depending on the tesselation
+     * algorithm supplied, as such care should be taken to ensure it does not
+     * execute on the graphics thread, but rather on a background thread. This
+     * method will prepare the geometry list, to be added to the scene by the
+     * update() method. Care should also be taken to ensure the update method IS
+     * called on the graphics update thread as it causes updates to be made to
+     * the Scene.
+     */
+    @Override
+    public boolean calculate() {
+        Stopwatch st = new Stopwatch(getClass());
+        st.start();
+        try {
+            updateLock.lock();
+            try {
+                if (!terrainChunk.isDirty()) {
+                    state = ChunkState.CALCULATED;
+                    return false;
+                }
+                geometries.clear();
+                geometries.addAll(createGeometries());
+                for (Spatial s : geometries) {
+                    attachChild(s);
+                }
+                terrainChunk.setDirty(false);
+                state = ChunkState.CALCULATED;
+            } finally {
+                updateLock.unlock();
+            }
+        } finally {
+            st.stop("Calculated Chunk in %dms");
+        }
+        return true;
+    }
 
-	@Override
-	public void setBlock(int blockType, Vector3f location) {
-		state = ChunkState.DIRTY;
-		terrainChunk.setBlock(blockType, location);
-		calculate();
-	}
+    @Override
+    public void removeBlock(Vector3f location) {
+        state = ChunkState.DIRTY;
+        terrainChunk.removeBlock(location);
+        calculate();
+    }
 
-	@Override
-	public void update(Vector3f location, Vector3f direction) {
-		updateLock.lock();
-		try {
-			detachAllChildren();
-			for (final Spatial s : geometries) {
-				attachChild(s);
-			}
-			geometries.clear();
-			state = ChunkState.UP2DATE;
-		} finally {
-			updateLock.unlock();
-		}
-	}
+    @Override
+    public void setBlock(int blockType, Vector3f location) {
+        state = ChunkState.DIRTY;
+        terrainChunk.setBlock(blockType, location);
+        calculate();
+    }
+
+    @Override
+    public void update(Vector3f location, Vector3f direction) {
+        updateLock.lock();
+        try {
+            detachAllChildren();
+            for (final Spatial s : geometries) {
+                attachChild(s);
+            }
+            geometries.clear();
+            state = ChunkState.UP2DATE;
+        } finally {
+            updateLock.unlock();
+        }
+    }
 
 }

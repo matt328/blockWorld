@@ -18,28 +18,34 @@ import com.jme3.scene.Geometry;
  * 
  */
 public interface Chunk {
-	String getName();
-	
-	boolean isEmpty(Vector3f position);
+    String getName();
 
-	void setBlock(int data, Vector3f position);
+    boolean isEmpty(Vector3f position);
 
-	int getBlock(Vector3f position);
+    void setBlock(int data, Vector3f position);
 
-	void removeBlock(Vector3f position);
+    /**
+     * @deprecated just use the function instead
+     * @param position
+     * @return
+     */
+    @Deprecated
+    int getBlock(Vector3f position);
 
-	BoundingBox getBoundingBox();
+    void removeBlock(Vector3f position);
 
-	void clear();
+    BoundingBox getBoundingBox();
 
-	boolean contains(Vector3f point);
+    void clear();
 
-	boolean isDirty();
+    boolean contains(Vector3f point);
 
-	void setDirty(boolean dirty);
+    boolean isDirty();
 
-	/**
-	 * @param position
-	 */
-	boolean hasBlock(Vector3f position);
+    void setDirty(boolean dirty);
+
+    /**
+     * @param position
+     */
+    boolean hasBlock(Vector3f position);
 }
