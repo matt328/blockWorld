@@ -28,6 +28,8 @@ import org.blockworldshared.math.Interpolation;
 import org.blockworldshared.math.functions.ColorMaker;
 import org.blockworldshared.math.functions.Function;
 import org.blockworldshared.math.functions.ScalePoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Matt Teeter
@@ -55,7 +57,7 @@ public class TopViewPanel extends JPanel implements ActionListener, MouseMotionL
         addMouseListener(this);
 
         setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-        this.function = new ScalePoint(f, 1.0f);
+        this.function = new ScalePoint(f, 0.5f);
         xStart = -400.0f;
         xEnd = 400.0f;
 
