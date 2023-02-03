@@ -19,5 +19,10 @@
 			<attribute name="without_test_code" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="src" path="bin/generated-sources/annotations">
+		<attributes>
+			<attribute name="optional" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin/default"/>
 </classpath>

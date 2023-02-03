@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Launch CommandLineAtm",
+      "request": "launch",
+      "mainClass": "org.blockworldeditor.dagger.CommandLineAtm",
+      "projectName": "editor"
+    },
+    {
+      "type": "java",
       "name": "Launch Current File",
       "request": "launch",
       "mainClass": "${file}"
